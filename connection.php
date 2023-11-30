@@ -5,8 +5,8 @@ class DAO {
 
 	
 	private $host="127.0.0.1";
-	private $user="usermonestie";
-	private $password="1234";
+	private $user="root";
+	private $password="";
 	private $database="monestie";
 	private $charset="utf8";
 	
@@ -66,6 +66,19 @@ class DAO {
         return $fetch;
         
     }
+
+    public function getCleaningStaff($useremail) {
+         
+        $sqluser = 'SELECT `id_user` FROM `person` WHERE `user_email` LIKE "'.$useremail.'"';
+        $query = $this->connection->prepare($sqluser);
+        $query->execute();
+        $fetch = $query->fetchAll();
+        return $fetch;
+        
+    }
+
+    
+
 
     // public function getPassword($fetchuser){
     //     $email = $fetchuser[0]['user_email'];
