@@ -67,14 +67,25 @@ class DAO {
         
     }
 
-    public function getCleaningStaff($useremail) {
-         
-        $sqluser = 'SELECT `id_user` FROM `person` WHERE `user_email` LIKE "'.$useremail.'"';
+    //je creer une fonction pour recuperer info de la BDD en passant par la class dao, le parametre va permettre 
+    //de prendre l'adresse mail de la personne qui s'est connéctée et de venir dans la BDD recuperer son user id
+    //en cherchant l'adresse mail de la personne concernée
+    public function getCleaningStaff($useremail) {  
+        $sqluser = 'SELECT * FROM `person` JOIN comments ON(person.id_user=comments.id_user) WHERE `user_email` LIKE "'.$useremail.'"';
         $query = $this->connection->prepare($sqluser);
         $query->execute();
         $fetch = $query->fetchAll();
         return $fetch;
         
+    }
+
+    //je recupere les informations de commentaires posté pour les afficher sur les pages en fonction de la categorie de la personne.
+    public function getCommentsCleaning($destination) {
+        $sqluser = 'SELECT * FROM `comments` JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'")';
+        // $query = $this->connection->prepare($sqluser);
+        // $query->execute();
+        // $fetch = $query->fetchAll();
+        return $sqluser;
     }
 
     
