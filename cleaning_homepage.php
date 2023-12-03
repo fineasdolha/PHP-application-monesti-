@@ -13,7 +13,6 @@ $iduser = $infoCleaner[0][0];
 $usertype = $infoCleaner[0][3];
 //categorie de destination comment admin,cleaning assoc.
 $commenttype = $infoCleaner[0][12];
-
 //j'appelle la date du jour
 date_default_timezone_set("Europe/Paris");
 $date = new DateTime('now');
@@ -101,8 +100,54 @@ if (isset($_POST['cancel'])) {
 
 if(isset($_POST['reply'])){
   $disapear=true;
-  print($disapear);
+  
 }
+//je donne une valeur a message car il n'existe pas avant de cliquer et cela genere une erreur lors du chargement de la page
+if (isset($_SESSION['message'])) {
+  $_SESSION['message1'] = '';
+}
+
+// sur le select je choisi un temps de travail que je viens update a mon workdone
+//puis je creer un message qui indiqueque le travail est réalisé
+//enfin je reinitialise la page pour eviter les renvoi de formulaire afin d'eviter les ajouts supplementaires dans la BDD
+if (isset($_POST['timePeriod']) && isset($_SESSION['message']) == '') {
+  $timeSpend = $_POST['timePeriod'];
+  $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
+  $db->prepExec($sql);
+  $_SESSION['message1'] = "CONGRATULATION ! You've juste register your work";
+  header('location:cleaning_homepage.php');
+}
+
+// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
+if (isset($_POST['logout'])) {
+  session_destroy();
+  header('location:index.php');
+}
+
+//je recupere la fonction creer en dao pour recuperer les donnnee des comments et les afficher
+
+//si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
+if ($usertype == 'cleaning') {
+  $arrayComment = $db->getCommentsCleaning($commenttype);
+  $elementComment = $db->queryRequest($arrayComment);
+  $dateComment = explode('-', $elementComment[0]['time_stamp']);
+  $day = explode(' ', $dateComment[2]);
+  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
+  print_r($elementComment);
+}
+
+
+
+
+if (isset($_POST['msg'])) {
+  $description = $_POST['msg'];
+  $destination = $_POST['optradio'];
+  $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
+  VALUES ('$description','$iduser','$destination','$curentdate')";
+  $db->prepExec($sql);
+  header('location:cleaning_homepage.php');
+}
+
 
 ?>
 
