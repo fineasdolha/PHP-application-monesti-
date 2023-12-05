@@ -117,7 +117,7 @@ class DAO {
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsResponsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination,id_association, time_stamp DESC';
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination,id_association, time_stamp ASC';
       
         return $sqluser;
     }

@@ -1,3 +1,5 @@
+SELECT * FROM `person` LEFT JOIN association ON(person.id_association=association.id_association) LEFT JOIN comments ON(person.id_user=comments.id_user);
+
 <?php
 session_start();
 require_once 'connection.php';
@@ -29,11 +31,7 @@ if (isset($_POST['logout'])) {
   session_destroy();
   header('location:index.php');
 }
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
-}
+
 
 //voir si les commentaires existent
 $arrayComment = $db->getCommentsAdmin($usertype);
@@ -72,7 +70,7 @@ if (isset($_POST['postinfo'])) {
       VALUES ('$description','$iduser','$destination','$curentdate')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
-    header('location:association_homepage.php');
+    header('location:admin_homepage.php');
   }
 }
 if (isset($_POST['msgreply'])) {
@@ -86,7 +84,7 @@ if (isset($_POST['msgreply'])) {
 }
 //pour ne pas recharger la page une fois la réponse envoyée
 if (isset($_POST['replybutton'])) {
-  header('location:association_homepage.php');
+  header('location:admin_homepage.php');
 }
 
 //pour retourner au formulaire new comment si on ne veux plus répondre à un message en particulier

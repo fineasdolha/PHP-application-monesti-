@@ -13,7 +13,7 @@ $usertype = $infoPerson[0][3];
 //categorie de destination comment admin,cleaning assoc.
 $userassociation = $infoPerson[0][6];
 //id comment .
-$idcomment= $infoPerson[0][7];
+$idcomment = $infoPerson[0][7];
 //j'appelle la date du jour
 date_default_timezone_set("Europe/Paris");
 $date = new DateTime('now');
@@ -55,7 +55,7 @@ if (isset($_POST['reply'])) {
 //soit l'autre des formuaires
 if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
-    $description =str_replace("'","\'",$_POST['msg']);
+    $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
     $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
       VALUES ('$description','$iduser','$destination','$curentdate')";
@@ -66,7 +66,7 @@ if (isset($_POST['postinfo'])) {
 }
 if (isset($_POST['msgreply'])) {
   $destinat = $_SESSION['destinat'];
-  $description = str_replace("'","\'",$_POST['msgreply']);
+  $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
   $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`)
@@ -81,7 +81,6 @@ if (isset($_POST['replybutton'])) {
 //pour retourner au formulaire new comment si on ne veux plus répondre à un message en particulier
 if (isset($_POST['cancelReply'])) {
   $_SESSION['disapear'] = 0;
-
 }
 
 ?>
@@ -120,112 +119,156 @@ if (isset($_POST['cancelReply'])) {
     </div>
   </nav>
 
-
-  <section class="jumbotron jumbotron-fluid">
+  <section>
     <section class="row ">
-      <article class=" col-sm-12 col-md-12 col-12 ">
-        <h1 class=" pl-2 " id="bienvenu">Hello ! <?php print($_SESSION['first_name']); ?> <?php print($_SESSION['last_name']); ?></h1>
+      <article class="col-lg-4 col-md-5 col-sm-4 offset-md-1 offset-sm-1 mt-4 ">
+        <h1 class=" pl-2 text-light " id="bienvenu"><span>Hello !<?php print($_SESSION['first_name']); ?> <?php print($_SESSION['last_name']); ?></span></h1>
       </article>
+      <article>
+      <div class="bd-example">
+  <div id="carouselExampleCaptions" class="carousel slide multi-item-carousel" data-ride="carousel">
 
-    </section>
-    <hr>
-    <section>
+    <ol class="carousel-indicators">
+      <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+      <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+      <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+    </ol>
 
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-7 col-sm-8 col-12 pb-4 pr-2 d-flex">
-            <h1>Conversations</h1>
-            <div class=" pb-4 pr-2 d-inline-flex">
-              <?php
-              foreach ($elementComment as $row) {
-                $idComent = $row['id_comment']; 
-                if ($row['id_comment'] != null && $row['comment_id'] == 0 && $userassociation == $row['id_association'] ) { ?>
-                  <form method="post">
-                    <div class="darker mt-4 text-justify ">
-                      <!-- //si on veut ajouter un avatar aux utilisateurs -->
-                      <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                      <h4><?php print $row['first_name']; ?></h4>
-                      <p><?php print $row['description']; ?></p><br>
-                      <input type="hidden" name="parentDestinat" value="<?php print $row['destination']; ?>">
-                      <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
-                      <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
-                      <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
-                        <span style="color:black">REPLY</span>
-
-                      </button>
-                    </div>
-                  </form>
-            </div>
-            <div>
-              <?php
-                  foreach ($elementResponse as $row) {
-                    if ($idComent == $row['comment_id']) { ?>
-                  <div class="darker mt-4 text-end response">
-                    <!-- //si on veut ajouter un avatar aux utilisateurs -->
-                    <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                    <h4><?php print $row['first_name']; ?></h4>
-                    <p><?php print $row['description']; ?></p><br>
-                    <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
-                  
-                  </div>
-
-              <?php }
-                  } ?>
-            <?php } ?>
-        
-          <?php } ?>
-            </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="item__third">
+          <img src="media/affiche3.jpg" class="d-block mx-auto" style="width:300px" alt="">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>peinture en folie</h5>
+            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
           </div>
         </div>
       </div>
-
-        <div class="col-lg-4 col-md-5 col-sm-4 offset-md-1 offset-sm-1 col-12 mt-4">
-          <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 0) { ?>hidden <?php } ?>>
-            <div class="darker mt-4 text-justify">
-              <div class="form-group">
-                <h4>Leave a message</h4>
-                <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
-              </div>
-              <div class="form-group">
-                <button type="submit" name="replybutton" onchange="this.form.submit()" class="btn" style="background:#ecb21f;padding-top:5px;padding-bottom:5px; font-size:0.7em;margin-bottom:10px; margin-top:10px">POST REPLY</button>
-                <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name='cancelReply' class="btn" onchange="this.form.submit()">CANCEL REPLY</button>
-                        
-              </div>
-            </div>
-          </form>
-
-          <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 1) { ?>hidden<?php } ?>>
-            <div class="darker mt-4 text-justify">
-              <div class="form-group">
-                <h4>Leave a message</h4>
-                <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
-              </div>
-              <label>Choose your recipient</label>
-              <div class="form-check text-light ">
-                <input type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
-                <label class=" form-check-label" for="radio1"></label>
-              </div>
-              <div class="form-check text-light">
-                <input type="radio" class="form-check-input" id="radio2" name="optradio" value="association">My association
-                <label class="form-check-label" for="radio2"></label>
-              </div>
-              <div class="form-check text-light">
-                <input type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
-                <label class="form-check-label" for="radio3"></label>
-              </div>
-
-              <div class="form-group">
-                <button type="submit" onchange="this.form.submit()" id="postinfo" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name="postinfo" class="btn">Post Message</button>
-              </div>
-            </div>
-          </form>
+      <div class="carousel-item">
+        <div class="item__third">
+          <img src="media/affiche1.webp" class="d-block mx-auto" style="width:300px" alt="">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>foire d'automne</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
         </div>
       </div>
+      <div class="carousel-item">
+        <div class="item__third">
+          <img src="media/affiche2.jpg" class="d-block mx-auto" style="width:300px" alt="">
+          <div class="carousel-caption d-none d-md-block">
+            <h5>Les automnales</h5>
+            <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+
+  </div>
+</div>
+      </article>
+    </section>
+    <hr>
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-5 col-lg-5 text-light">
+            <h1>Conversations</h1>
+
+            <?php foreach ($elementComment as $row) {
+              $idComent = $row['id_comment'];
+              if ($row['id_comment'] != null && $row['comment_id'] == 0 && $userassociation == $row['id_association']) { ?>
+                <form method="post">
+                  <div class="darker mt-4 text-justify ">
+                    <!-- //si on veut ajouter un avatar aux utilisateurs -->
+                    <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+                    <h4 class="text-light"><?php print $row['first_name']; ?></h4>
+                    <p><?php print $row['description']; ?></p><br>
+                    <input type="hidden" name="parentDestinat" value="<?php print $row['destination']; ?>">
+                    <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
+                    <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                    <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
+                      REPLY
+                    </button>
+                  </div>
+                </form>
+
+
+                <div>
+                  <?php foreach ($elementResponse as $row) {
+                    if ($idComent == $row['comment_id']) { ?>
+                      <div class="darker mt-4 text-end response">
+                        <!-- //si on veut ajouter un avatar aux utilisateurs -->
+                        <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+                        <h4><?php print $row['first_name']; ?></h4>
+                        <p><?php print $row['description']; ?></p><br>
+                        <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                      </div>
+                  <?php }
+                  } ?>
+                <?php } ?>
+
+              <?php } ?>
+                </div>
+          </div>
+          <div class="col-12 col-sm-12 col-md-7 col-lg-7">
+            <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 0) { ?>hidden <?php } ?>>
+              <div class="darker mt-4 text-justify">
+                <div class="form-group">
+                  <h4>Leave a message</h4>
+                  <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                </div>
+                <div class="form-group">
+                  <button type="submit" name="replybutton" onchange="this.form.submit()" class="btn" style="background:#ecb21f;padding-top:5px;padding-bottom:5px; font-size:0.7em;margin-bottom:10px; margin-top:10px">POST REPLY</button>
+                  <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name='cancelReply' class="btn" onchange="this.form.submit()">CANCEL REPLY</button>
+                </div>
+              </div>
+            </form>
+            <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 1) { ?>hidden<?php } ?>>
+              <div class="darker mt-4 text-justify">
+                <div class="form-group">
+                  <h4>Leave a message</h4>
+                  <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                </div>
+                <label>Choose your recipient</label>
+                <div class="form-check text-light ">
+                  <input type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
+                  <label class=" form-check-label" for="radio1"></label>
+                </div>
+                <div class="form-check text-light">
+                  <input type="radio" class="form-check-input" id="radio2" name="optradio" value="association">My association
+                  <label class="form-check-label" for="radio2"></label>
+                </div>
+                <div class="form-check text-light">
+                  <input type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
+                  <label class="form-check-label" for="radio3"></label>
+                </div>
+
+                <div class="form-group">
+                  <button type="submit" onchange="this.form.submit()" id="postinfo" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name="postinfo" class="btn">Post Message</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="script.js"></script>
-
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="script.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 </body>
 
 </html>
