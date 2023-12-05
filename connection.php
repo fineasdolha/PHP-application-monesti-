@@ -85,13 +85,15 @@ class DAO {
         $query = $this->connection->prepare($sqluser);
         $query->execute();
         $fetch = $query->fetchAll();
+    
      
         return $fetch;
         
     }
 
     public function getAssocInfo($useremail) {  
-        $sqluser = 'SELECT * FROM `person` LEFT JOIN comments ON(person.id_user=comments.id_user) WHERE `user_email` LIKE "'.$useremail.'"';
+        $sqluser = 'SELECT * FROM `person` LEFT JOIN comments ON(person.id_user=comments.id_user)
+        LEFT JOIN association ON(person.id_association=association.id_association) WHERE `user_email` LIKE "'.$useremail.'"';
         $query = $this->connection->prepare($sqluser);
         $query->execute();
         
@@ -103,40 +105,35 @@ class DAO {
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne appartient au nettoyage.
     public function getCommentsCleaning($destination) {
         $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY time_stamp DESC';
-        // $query = $this->connection->prepare($sqluser);
-        // $query->execute();
-        // $fetch = $query->fetchAll();
         return $sqluser;
     }
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY time_stamp DESC';
-        // $query = $this->connection->prepare($sqluser);
-        // $query->execute();
-        // $fetch = $query->fetchAll();
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination,id_association, time_stamp DESC';
+      
+        return $sqluser;
+    }
+
+    //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
+    public function getCommentsResponsAdmin() {
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination,id_association, time_stamp DESC';
+      
         return $sqluser;
     }
 
      //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne appartient au nettoyage.
      public function getCommentsAsso($destination) {
         $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY time_stamp DESC';
-        // $query = $this->connection->prepare($sqluser);
-        // $query->execute();
-        // $fetch = $query->fetchAll();
-        var_dump($sqluser);
         return $sqluser;
     }
 
-    // public function getPassword($fetchuser){
-    //     $email = $fetchuser[0]['user_email'];
-    //     $sql = 'SELECT `user_password` from `person` WHERE `user_email` LIKE "'.$email.'"';
-    //     $query = $this ->connection->prepare($sql);
-    //     $query->execute();
-    //     $fetchpassword = $query -> fetch();
-    //     return $fetchpassword;
-    // }
-
+    //je recupère les comments mais dans un ordre different pour afficher les réponses dans l'ordre croissant
+    public function getCommentsResponse($destination) {
+        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY id_comment ASC';
+        return $sqluser;
+    }
+    
     public function getUserAsociation($id_association, $id_user){
         $sql = 'SELECT * FROM association JOIN person WHERE association.id_association = person.id_association AND association.id_association ='.$id_association.' AND person.id_user ='.$id_user.'';
         $query = $this ->connection->prepare($sql);
