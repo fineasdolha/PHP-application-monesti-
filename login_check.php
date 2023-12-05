@@ -22,9 +22,16 @@ if(ISSET($_POST['login'])){
                 $_SESSION['user_email'] = $_POST['email'];
                 if ($_SESSION['user_type'] == 'cleaning'){
                     header('location:cleaning_homepage.php');
+                }else if($_SESSION['user_type'] == 'admin'){
+                    header('location:admin_homepage.php');
+                } else if($_SESSION['user_type'] == 'association'){
+                    header('location:association_homepage.php');
                 }
             } 
-        } 
-}else print 'account not existing';
+        }else {
+            $_SESSION['message-error'] = 'User not yet registered';
+            header('location:login.php');
+        }; 
+}
 
 ?>

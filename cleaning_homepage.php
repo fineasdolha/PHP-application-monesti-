@@ -55,7 +55,7 @@ if (isset($_POST['logout'])) {
 
 //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
 if ($usertype == 'cleaning') {
-  $arrayComment = $db->getCommentsCleaning($commenttype);
+  $arrayComment = $db->getCommentsCleaning($usertype);
   $elementComment = $db->queryRequest($arrayComment);
   $idcomment=($elementComment[1][0]);
   $commentid=($elementComment[0][1]);
@@ -83,7 +83,7 @@ if (isset($_POST['msg'])) {
   $sql = "INSERT INTO `comments`(`id_comment`, `comment_id`, `description`, `id_user`, `time_stamp`)
    VALUES ('6','$incrementCommentId','$description','$iduser','$curentdate')";
   $db->prepExec($sql);
-  var_dump( $incrementCommentId);
+  
   $disapear=false;
   header('location:cleaning_homepage.php');
 }
@@ -114,7 +114,7 @@ if (isset($_POST['timePeriod']) && isset($_SESSION['message']) == '') {
   $timeSpend = $_POST['timePeriod'];
   $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
   $db->prepExec($sql);
-  $_SESSION['message1'] = "CONGRATULATION ! You've juste register your work";
+  $_SESSION['message1'] = "CONGRATULATIONS ! You sucessfully registered your work";
   header('location:cleaning_homepage.php');
 }
 
@@ -133,7 +133,6 @@ if ($usertype == 'cleaning') {
   $dateComment = explode('-', $elementComment[0]['time_stamp']);
   $day = explode(' ', $dateComment[2]);
   $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
-  print_r($elementComment);
 }
 
 
@@ -178,7 +177,7 @@ if (isset($_POST['msg'])) {
         </li>
       </ul>
       <span class="navbar-text">
-        <form method="post">
+        <form action="logout.php" method="post">
           <a class="nav-link" href="#" style="background:#ecb21f; font-size:1em"><button name='logout' class='btn' type='submit' onchange='this.form.submit()'>Log out</button></a>
         </form>
       </span>
@@ -219,7 +218,7 @@ if (isset($_POST['msg'])) {
                   <!-- <button type="button" class="close row  justify-content-end " data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button> -->
-                  <p class="lead"> <?php print("CONGRATULATION !") ?><br> <?php print("You've been working the " . $dateMessage); ?> </p>
+                  <p class="lead"> <?php print("CONGRATULATIONS !") ?><br> <?php print("You've been working the " . $dateMessage); ?> </p>
                   <form method="post">
                     <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='cancel' id='cancel' class="btn" onchange="this.form.submit()">
                       <span style="color:black">CANCEL RECORD</span>
@@ -306,8 +305,15 @@ if (isset($_POST['msg'])) {
         </div>
       </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="script.js"></script>
+    <section class="container">
+              
+              <h1>Calendar</h1>
+              <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
+
+    </section>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>    <script type="text/javascript" src="script.js"></script>
 </body>
 
 </html>

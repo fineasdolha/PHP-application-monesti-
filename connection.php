@@ -5,8 +5,8 @@ class DAO {
 
 	
 	private $host="127.0.0.1";
-	private $user="root";
-	private $password="";
+	private $user="usermonestie";
+	private $password="1234";
 	private $database="monestie";
 	private $charset="utf8";
 	
@@ -71,7 +71,7 @@ class DAO {
     //de prendre l'adresse mail de la personne qui s'est connéctée et de venir dans la BDD recuperer son user id
     //en cherchant l'adresse mail de la personne concernée
     public function getCleaningStaff($useremail) {  
-        $sqluser = 'SELECT * FROM `person` JOIN comments ON(person.id_user=comments.id_user) WHERE `user_email` LIKE "'.$useremail.'"';
+        $sqluser = 'SELECT * FROM `person` LEFT JOIN comments ON(person.id_user=comments.id_user) WHERE `user_email` LIKE "'.$useremail.'"';
         $query = $this->connection->prepare($sqluser);
         $query->execute();
         $fetch = $query->fetchAll();
@@ -81,7 +81,7 @@ class DAO {
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages en fonction de la categorie de la personne.
     public function getCommentsCleaning($destination) {
-        $sqluser = 'SELECT * FROM `comments` JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY time_stamp DESC';
+        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY time_stamp DESC';
         // $query = $this->connection->prepare($sqluser);
         // $query->execute();
         // $fetch = $query->fetchAll();

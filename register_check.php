@@ -11,7 +11,7 @@ if (isset($_POST['firstname'])&& $_POST['firstname'] !=''){
         $lastname = $_POST['lastname'];
         $testMail = $db -> getUserInfo($_POST['email']);
         if ($testMail){
-            $_SESSION['message'] = 'The email you entred is already used!';
+            $_SESSION['message-error'] = 'The email you entred is already used!';
             $checkEmailUsage=true;
             $checkAllFields=true;
             header('location:register.php');
@@ -35,7 +35,7 @@ if($checkAllFields==true && $checkEmailUsage==false){
     header('location:register_succes.php');
 }
 elseif($checkAllFields==false) {
-    $_SESSION['message'] = 'Complete all required information!';
+    $_SESSION['message-error'] = 'Complete all required information!';
     header('location:register.php');
 } 
 // else {$_SESSION['message']= $db ->errorInfo();} ??

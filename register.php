@@ -18,9 +18,9 @@
     <title>Register</title>
 </head>
 <body>
-    <?php if(isset($_SESSION['message'])){ ?>
+    <?php if(isset($_SESSION['message-error'])){ ?>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <?php echo $_SESSION['message']; 
+            <?php echo $_SESSION['message-error']; 
                 
             ?>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -88,7 +88,7 @@
     <a href="index.php"><button type="button" style="width: 200px; height:80px;" class="btn btn-secondary m-5">Return to homepage</button></a>
     <a href="login.php"><button type="button" style="width: 200px; height:80px;" class="btn btn-secondary m-5">Already signed up? Log in!</button></a>
 </section>  
-<!-- <?php if(isset($_SESSION['message'])){$_SESSION['message']=null;} ?> -->
+ <?php if(isset($_SESSION['message-error'])){$_SESSION['message-error']=null;} ?> 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>    
 </body>
 </html>
