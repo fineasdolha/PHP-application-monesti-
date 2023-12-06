@@ -29,7 +29,7 @@
         </div>  
     <?php } ?>
     <figure class="text-center">
-    <h1>Register <small class="text-body-secondary">below</small></h1>
+    <h1>Register <sub>below</sub></h1>
     </figure>
 <form action="register_check.php" method="POST" class="container" style="max-width: 500px;">
   <div class="mb-3">
@@ -52,19 +52,19 @@
   <label for="radio-container" class="form-label my-2">You are registering as :</label>
   <div id="radio-container" class="d-flex justify-content-start p" >
   <div class="form-check mr-2 my-2">
-  <input class="form-check-input" type="radio" name="entity" id="admin" value="admin" required>
+  <input onchange="disableSelect()" class="form-check-input" type="radio" name="entity" id="admin" value="admin" required>
   <label class="form-check-label" for="admin">
     Admin
   </label>
 </div>
 <div class="form-check m-2 my-2 ">
-  <input class="form-check-input" type="radio" name="entity" id="association" value="association" required>
+  <input onchange="enableSelect()" class="form-check-input" type="radio" name="entity" id="association" value="association" required>
   <label class="form-check-label" for="association">
     Association
   </label>
 </div>
 <div class="form-check m-2 my-2">
-  <input class="form-check-input" type="radio" name="entity" id="cleaning" value="cleaning" required>
+  <input onchange="disableSelect()" class="form-check-input" type="radio" name="entity" id="cleaning" value="cleaning" required>
   <label class="form-check-label" for="cleaning">
   Cleaning
   </label>
@@ -74,7 +74,7 @@
          <label for="association-choice">What is the name of your association?</label>
          <select id="association-choice" class="form-control " name="association-choice" required>
          <option value="">Choose an option</option>
-         <option value="0">None</option>
+         <option id='choice-none' value="0">None</option>
          <?php foreach($associationList as $row){?>
               
              <option value="<?php print $row['id_association'];?>"><?php print $row['name_association'];?></option>
@@ -83,13 +83,14 @@
     </div>
 
 
-  <button name="login" type="submit" class="btn btn-primary mt-2">Register</button>
+  <button style="background:#ecb21f; font-size:1em" name="login" type="submit" class="btn">Register</button>
 </form>
 <section class="d-flex justify-content-center align-items-end" style="min-width: 50em;">  
-    <a href="index.php"><button type="button" style="width: 200px; height:80px;" class="btn btn-secondary m-5">Return to homepage</button></a>
-    <a href="login.php"><button type="button" style="width: 200px; height:80px;" class="btn btn-secondary m-5">Already signed up? Log in!</button></a>
+    <a href="index.php"><button type="button" style="background:#ecb21f; font-size:1em; width: 200px; height:80px;" class="btn m-5">Return to homepage</button></a>
+    <a href="login.php"><button type="button" style="background:#ecb21f; font-size:1em; width: 200px; height:80px;" class="btn m-5">Already signed up? Log in!</button></a>
 </section>  
  <?php if(isset($_SESSION['message-error'])){$_SESSION['message-error']=null;} ?> 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>    
+<script src='script.js'></script>
 </body>
 </html>

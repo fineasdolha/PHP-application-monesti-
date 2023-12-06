@@ -25,7 +25,7 @@
         </div>  
     <?php }  ?>
     <figure class="text-center">
-    <h1>Log <small class="text-body-secondary">into your account</small></h1>
+    <h1>Log into<sub> your account</sub></h1>
     </figure>
 <form action="login_check.php" method="POST" class="container" style="max-width: 500px;">
   <div class="mb-3">
