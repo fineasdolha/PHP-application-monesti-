@@ -73,6 +73,7 @@
 <div class="mb-3">
          <label for="association-choice">What is the name of your association?</label>
          <select id="association-choice" class="form-control " name="association-choice" required>
+         <option value="">Choose an option</option>
          <option value="0">None</option>
          <?php foreach($associationList as $row){?>
               
