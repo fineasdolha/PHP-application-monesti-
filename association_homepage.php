@@ -27,10 +27,11 @@ if (isset($_POST['logout'])) {
     session_destroy();
     header('location:index.php');
   }
-  
+ 
   //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
   if ($usertype == 'association') {
     $arrayComment = $db->getCommentsAsso($usertype);
+    
     $elementComment = $db->queryRequest($arrayComment);
 
     $dateComment = explode('-', $elementComment[0]['time_stamp']);
@@ -48,6 +49,7 @@ if (isset($_POST['logout'])) {
   print('hello'.$_SESSION['disapear']);
   
   if (isset($_POST['msg'])) {
+    var_dump($_POST['msg']);
     if($_SESSION['disapear']===0){
       $description = $_POST['msg'];
       print('bob');
@@ -55,7 +57,7 @@ if (isset($_POST['logout'])) {
       $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
       VALUES ('$description','$iduser','$destination','$curentdate')";
       $db->prepExec($sql);
-      header('location:association_homepage.php');
+      //header('location:association_homepage.php');
     }else
     {
      
@@ -69,6 +71,8 @@ if (isset($_POST['logout'])) {
     $_SESSION['disapear']=0;
     header('location:association_homepage.php');
   }
+
+
 }
   
  
@@ -80,7 +84,7 @@ if (isset($_POST['logout'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!-- <link href="style.css" rel="stylesheet"> -->
+    <link href="style.css" rel="stylesheet"> 
     <title>Home</title>
 </head>
 <body>

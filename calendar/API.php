@@ -15,6 +15,8 @@ foreach ($reservations as $row) {
         $event["end"]=$row['end_datetime'];
         $event["title"]=$row['title'];
         $event['reservation_number']=$row['id_reservation'];
+        $event['description']= $row['description'];
+        $event['overlap'] = false;
     } else {
         $timestampstart = strtotime($row['start_datetime']);
         $timestampend = strtotime($row['end_datetime']);
@@ -34,6 +36,7 @@ foreach ($reservations as $row) {
         $event["color"]='red';
         $event["eventTextColor"]= 'red';
         $event['reservation_number']=$row['id_reservation'];
+        $event['overlap'] = false;
     }
 
    $sched_res[] = $event;

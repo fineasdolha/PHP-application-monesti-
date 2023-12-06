@@ -36,8 +36,6 @@ if (isset($_POST['logout'])) {
 if ($usertype == 'admin') {
   $arrayComment = $db->getCommentsAdmin($usertype);
   $elementComment = $db->queryRequest($arrayComment);
-  $idcomment=($elementComment[1][0]);
-  $commentid=($elementComment[0][1]);
   $dateComment = explode('-', $elementComment[0]['time_stamp']);
   $day = explode(' ', $dateComment[2]);
   $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
@@ -96,13 +94,11 @@ if(isset($_POST['reply'])){
       </ul>
       <span class="navbar-text">
         <form method="post">
-          <a class="nav-link" href="#" style="background:#ecb21f; font-size:1em"><button name='logout' class='btn' type='submit' onchange='this.form.submit()'>Log out</button></a>
+          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em"><button name='logout' class='btn' type='submit'>Log out</button></a>
         </form>
       </span>
     </div>
   </nav>
-
-
   <section class="jumbotron jumbotron-fluid">
     <section class="row ">
       <article class=" col-sm-12 col-md-12 col-12 ">
@@ -110,6 +106,13 @@ if(isset($_POST['reply'])){
       </article>
       
     </section>
+
+<section class="container">
+              <h1>Calendar</h1>
+              <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
+</section>  
+
+
     <hr>
     <section>
 

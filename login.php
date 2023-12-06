@@ -23,7 +23,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
         </div>  
-    <?php } else print('noono'); ?>
+    <?php }  ?>
     <figure class="text-center">
     <h1>Log <small class="text-body-secondary">into your account</small></h1>
     </figure>

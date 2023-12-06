@@ -37,6 +37,16 @@
         $user_type= $_SESSION['user_type'];  
        
         ?>
+        <?php if(isset($_SESSION['message']) && $_SESSION['message'] != ''){ ?>
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <?php echo $_SESSION['message']; 
+                
+            ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>  
+    <?php }  ?>
         
         <div class="container py-5">
         <h1 class="text-center text-light py-5">Reservation calendar for the <span id="department"><?php print $user_type ?></span> department</h1>
@@ -47,7 +57,7 @@
             <div class="col-md-3" id="form-rights">
                 <div class="cardt rounded-2 shadow">
                     <div class="card-header bg-dark text-light">
-                        <h5 class="card-title">New reservation</h5>
+                        <h5 id="card-title" class="card-title">New reservation</h5>
                     </div>
                     <div class="card-body">
                         <div class="container-fluid">
@@ -78,16 +88,16 @@
                                     </div>
                                 <div class="form-group mb-2" id="test">
                                 <label for="end_recurrency" class="control-label text-white">Last recurrency will be: </label>     
-                                <input type="datetime-local" class="form-control form-control-sm rounded-0" name="end_recurrency" id="end_recurrency" required disabled>
+                                <input type="datetime-local" class="form-control form-control-sm rounded-0" name="end_recurrency" id="end_recurrency" disabled>
                             </div>        
                             </form>
                         </div>
                     </div>
                     <div class="card-footer">
                         <div class="text-center">
-                            <button id="positive-button" class="btn btn-primary btn-sm rounded-2" type="submit" name="send" value="save" form="schedule-form"><i class="fa fa-save"></i> Save</button>
-                            <button class="btn btn-default border btn-sm rounded-2 text-light" type="reset" form="schedule-form"><i class="fa fa-reset test-light"></i> Cancel</button>
-                            <button id="negative-button" class="btn btn-danger btn-sm rounded-2" type="submit" disabled name="send" value="delete" form="schedule-form"><i class="fa fa-save"></i> Delete</button>
+                            <button id="positive-button" class="btn btn-primary btn-sm rounded-2" type="submit" name="send" value="save" form="schedule-form"> Save</button>
+                            <button class="btn btn-default border btn-sm rounded-2 text-light"  type="button" onclick="resetForm()" form="schedule-form"> Cancel</button>
+                            <button id="negative-button" class="btn btn-danger btn-sm rounded-2" type="submit" disabled name="send" value="delete" form="schedule-form">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -95,7 +105,6 @@
         </div>
     </div>
     <!--modal area -->
-    <a href="#event-details-modal" data-toggle="modal">modal</a>
     <div class="modal fade" tabindex="-1" data-bs-backdrop="static" id="event-details-modal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-0">
@@ -105,28 +114,24 @@
                 </div>
                 <div class="modal-body rounded-0">
                     <div class="container-fluid">
-                     <h3>Reservation title</h3>
                      <h3 id="event-title"></h3>
                      <p id="event-description"></p>
-                     <h3>The reservation number is </h3>
-                     <h3 id="event-number"></h3>
-                     <h5>The reservation starts : </h5>
-                     <h6 id="event-start"></h6>
-                     <h5>And ends : </h5>
-                     <h6 id="event-end"></h6>   
+                     <p>Reservation number <span id="event-number"></span> </p>   
+                     <p>The reservation starts : <span id="event-start"></span></p>
+                     <p>And ends : <span id="event-end"></span></p>
+                     <p>This reservation <span id="details-recurrency"></span></p>   
                     </div>
                 </div>
                 <div class="modal-footer rounded-0">
                     <div class="text-end">
                         <button type="button" onclick="getInfosModal()" class="btn btn-primary btn-sm rounded-0" id="edit-modal">Edit</button>
-                        <button type="button" class="btn btn-danger btn-sm rounded-0" id="delete-modal">Delete</button>
                         <button type="button" class="btn btn-secondary btn-sm rounded-0" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>    
-
+<?php $_SESSION['message']=''?>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>    
