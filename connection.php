@@ -5,8 +5,8 @@ class DAO {
 
 	
 	private $host="127.0.0.1";
-	private $user="usermonestie";
-	private $password="1234";
+	private $user="root";
+	private $password="";
 	private $database="monestie";
 	private $charset="utf8";
 	
@@ -90,7 +90,16 @@ class DAO {
         return $fetch;
         
     }
-
+    
+    public function getAllPerson() {  
+        $sqluser = 'SELECT * FROM `person`';
+        $query = $this->connection->prepare($sqluser);
+        $query->execute();
+        
+        $fetch = $query->fetchAll();
+        return $fetch;
+        
+    }
     public function getAssocInfo($useremail) {  
         $sqluser = 'SELECT * FROM `person` LEFT JOIN comments ON(person.id_user=comments.id_user)
         LEFT JOIN association ON(person.id_association=association.id_association) WHERE `user_email` LIKE "'.$useremail.'"';
@@ -110,14 +119,23 @@ class DAO {
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination,id_association, time_stamp DESC';
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination, time_stamp DESC';
       
         return $sqluser;
     }
 
+    //je récupere les documents, id reservation, description reservation et titre et info association
+    public function getDocAssoc($nameAssoc) {
+        $sqluser = 'SELECT * FROM `docs` 
+        LEFT JOIN reservation ON(reservation.id_reservation=docs.id_reservation)
+        LEFT JOIN association ON(association.id_association=docs.id_association) WHERE name_association LIKE "'.$nameAssoc.'%"';
+   
+        return $sqluser;
+    }
+    
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsResponsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination,id_association, time_stamp ASC';
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination, time_stamp ASC';
       
         return $sqluser;
     }

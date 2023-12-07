@@ -5,13 +5,16 @@ $db = new DAO();
 $db->connection();
 //je recupere info depuis la class dao l'userid du personnel de menage apres sa connection
 $infoPerson = $db->getAssocInfo($_SESSION['user_email']);
-
+$_SESSION['homepage']='association_homepage.php';
 // je recupere info string du tableau pour pouvoir faire INSERT
 $iduser = $infoPerson[0][0];
 //categorie de la personne admin,cleaning assoc.
 $usertype = $infoPerson[0][3];
 //categorie de destination comment admin,cleaning assoc.
 $userassociation = $infoPerson[0][6];
+//nom assoc user
+$userAssocName=$infoPerson[0][16];
+
 //id comment .
 $idcomment = $infoPerson[0][7];
 //j'appelle la date du jour
@@ -49,11 +52,16 @@ if ($usertype == 'association') {
   $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
 }
 
+//requete pour recup info doc pour gestion carousel
+$arrayDocsAssoc = $db->getDocAssoc($userAssocName);
+$elementDocAssoc = $db->queryRequest($arrayDocsAssoc);
+
 //si on clique sur bouton reply et on recupère les valeurs des input du commentaire choisi
 if (isset($_POST['reply'])) {
   $_SESSION['disapear'] = 1;
   $_SESSION['id'] = $_POST['parent_id'];
   $_SESSION['destinat'] = $_POST['parentDestinat'];
+  $_SESSION['idAssoc']=$_POST['parentassociation'];
 }
 
 
@@ -63,8 +71,8 @@ if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
     $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
-      VALUES ('$description','$iduser','$destination','$curentdate')";
+    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`id_association`) 
+      VALUES ('$description','$iduser','$destination','$curentdate','$userassociation')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
     header('location:association_homepage.php');
@@ -76,9 +84,10 @@ if (isset($_POST['msgreply'])) {
   $destinat = $_SESSION['destinat'];
   $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
+  $idAssoc=$_SESSION['idAssoc'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
-  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`)
-     VALUES ('$id','$description','$iduser','$destinat','$curentdate')";
+  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
+     VALUES ('$id','$description','$iduser','$destinat','$curentdate','$idAssoc)";
   $db->prepExec($sql);
 }
 //pour ne pas recharger la page une fois la réponse envoyée
@@ -90,7 +99,7 @@ if (isset($_POST['replybutton'])) {
 if (isset($_POST['cancelReply'])) {
   $_SESSION['disapear'] = 0;
 }
-
+$_SESSION['homepage']='association_homepage.php';
 ?>
 
 <!DOCTYPE html>
@@ -116,12 +125,12 @@ if (isset($_POST['cancelReply'])) {
           <a class="nav-link" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Work</a>
+          <a class="nav-link" href="calendar/calendar.php">Calendar</a>
         </li>
       </ul>
       <span class="navbar-text">
         <form method="post">
-          <a class="nav-link" href="#" style="background:#ecb21f; font-size:1em"><button name='logout' class='btn' type='submit' onchange='this.form.submit()'>Log out</button></a>
+          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
         </form>
       </span>
     </div>
@@ -143,33 +152,26 @@ if (isset($_POST['cancelReply'])) {
     </ol>
 
     <div class="carousel-inner">
-      <div class="carousel-item active">
+    <!--pour que la caroussel fonctionne il faut mettre active sur la première affiche donc ele ne sera activé que sur la première-->
+    <?php $iteration=0;
+    foreach($elementDocAssoc as $row){ ?>
+      <div class="carousel-item 
+      <?php if($iteration==0){ ?>
+      active
+      <?php }?>
+      ">
         <div class="item__third">
-          <img src="media/affiche3.jpg" class="d-block mx-auto" style="width:300px" alt="">
+          <img src="<?php print $row['file']; ?>" class="d-block mx-auto" style="width:300px;margin-bottom:160px" alt="">
+          
           <div class="carousel-caption d-none d-md-block">
-            <h5>peinture en folie</h5>
-            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+            <h5><?php print $row['title']; ?></h5>
+            <p><?php print $row['description']; ?></p>
           </div>
         </div>
       </div>
-      <div class="carousel-item">
-        <div class="item__third">
-          <img src="media/affiche1.webp" class="d-block mx-auto" style="width:300px" alt="">
-          <div class="carousel-caption d-none d-md-block">
-            <h5>foire d'automne</h5>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <div class="item__third">
-          <img src="media/affiche2.jpg" class="d-block mx-auto" style="width:300px" alt="">
-          <div class="carousel-caption d-none d-md-block">
-            <h5>Les automnales</h5>
-            <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-          </div>
-        </div>
-      </div>
+      <?php $iteration++ ?>
+      <?php } ?>
+   
     </div>
 
     <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
@@ -190,53 +192,53 @@ if (isset($_POST['cancelReply'])) {
       <div class="container">
         <div class="row">
           <div class="col-12 col-sm-12 col-md-5 col-lg-5 text-light">
-            <h1>Conversations</h1>
+          <h1>Conversations</h1>
 
-            <?php foreach ($elementComment as $row) {
-              $idComent = $row['id_comment'];
-              if ($row['id_comment'] != null && $row['comment_id'] == 0 && $userassociation == $row['id_association']) { ?>
-                <form method="post">
-                  <div class="darker mt-4 text-justify ">
-                    <!-- //si on veut ajouter un avatar aux utilisateurs -->
-                    <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                    <h4 class="text-light"><?php print $row['first_name']; ?></h4>
-                    <p><?php print $row['description']; ?></p><br>
-                    <input type="hidden" name="parentDestinat" value="<?php print $row['destination']; ?>">
-                    <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
-                    <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
-                    <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
-                      REPLY
-                    </button>
-                  </div>
-                </form>
+<?php foreach ($elementComment as $row) {
+  $idComent = $row['id_comment'];
+  if ($row['id_comment'] != null  && $userassociation == $row['id_association']) { ?>
+    <form method="post">
+      <div class="darker mt-4 text-justify ">
+        <!-- //si on veut ajouter un avatar aux utilisateurs -->
+        <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+        <h4 class="text-light"><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
+        <p><?php print $row['description']; ?></p><br>
+        <input type="hidden" name="parentassociation" value="<?php print $row['id_association']; ?>">
+        <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
+        <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
+        <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+        <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
+          REPLY
+        </button>
+      </div>
+    </form>
+    <div>
+      <?php foreach ($elementResponse as $row) {
+        if ($idComent == $row['comment_id']) { ?>
+          <div class="darker mt-4 text-end response">
+            <!-- //si on veut ajouter un avatar aux utilisateurs -->
+            <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+            <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
+            <p><?php print $row['user_type']; ?></p><br>
+            <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+          </div>
+      <?php }
+      } ?>
+    <?php } ?>
 
-
-                <div>
-                  <?php foreach ($elementResponse as $row) {
-                    if ($idComent == $row['comment_id']) { ?>
-                      <div class="darker mt-4 text-end response">
-                        <!-- //si on veut ajouter un avatar aux utilisateurs -->
-                        <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                        <h4><?php print $row['first_name']; ?></h4>
-                        <p><?php print $row['description']; ?></p><br>
-                        <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
-                      </div>
-                  <?php }
-                  } ?>
-                <?php } ?>
-
-              <?php } ?>
-                </div>
+  <?php } ?>
+    </div>
+          </div>
           </div>
           <div class="col-12 col-sm-12 col-md-7 col-lg-7">
             <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 0) { ?>hidden <?php } ?>>
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
-                  <h4>Leave a message</h4>
+                  <h4 class="text-light ">Leave a message</h4>
                   <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <div class="form-group">
-                  <button type="submit" name="replybutton" onchange="this.form.submit()" class="btn" style="background:#ecb21f;padding-top:5px;padding-bottom:5px; font-size:0.7em;margin-bottom:10px; margin-top:10px">POST REPLY</button>
+                  <button type="submit" name="replybutton" onchange="this.form.submit()" class="btn" style="background:#ecb21f ;padding-top:5px;padding-bottom:5px; font-size:0.7em;margin-bottom:10px; margin-top:10px">POST REPLY</button>
                   <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name='cancelReply' class="btn" onchange="this.form.submit()">CANCEL REPLY</button>
                 </div>
               </div>
@@ -244,7 +246,7 @@ if (isset($_POST['cancelReply'])) {
             <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 1) { ?>hidden<?php } ?>>
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
-                  <h4>Leave a message</h4>
+                  <h4 class="text-light ">Leave a message</h4>
                   <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <label>Choose your recipient</label>
