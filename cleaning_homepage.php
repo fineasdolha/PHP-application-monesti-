@@ -13,6 +13,8 @@ $iduser = $infoCleaner[0][0];
 $usertype = $infoCleaner[0][3];
 //id comment .
 $idcomment = $infoCleaner[0][7];
+//id association
+$idAssociation=$infoCleaner[0][6];
 //j'appelle la date du jour
 date_default_timezone_set("Europe/Paris");
 $date = new DateTime('now');
@@ -22,47 +24,37 @@ $curentdate = $date->format('Y/m/d h:s');
 $dateMessage = $date->format('m/d/Y');
 //pour changer de formulaire d'envoi en fonction reponse ou nouveau message variable pour condition
 $_SESSION['disapear'] = 0;
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
-}
+
+
 // je clique sur le bouton workdone cela insert dans BDD l'id de la personne qui l'utilise et la date/heure du jour
 if (isset($_POST['workdone'])) {
   $sql = "INSERT INTO `interventions`(`id_user`, `time_stamp`) 
   VALUES ('$iduser','$curentdate')";
+  
   $db->prepExec($sql);
 }
-
-//pour annuler workdone
-// print ($hide);
-if (isset($_POST['cancelWork']) && isset($_POST['workdone'])) {
-  print('bobo');
-  $sql = "DELETE FROM `interventions` WHERE id_user IN ($iduser) ORDER BY id_intervention DESC limit 1;";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = null;
-  $_POST['workdone'] = null;
-  $_POST['timePeriod'] = '';
-  header('location:cleaning_homepage.php');
-}
-
 
 // sur le select je choisi un temps de travail que je viens update a mon workdone
 //puis je creer un message qui indiqueque le travail est réalisé
 //enfin je reinitialise la page pour eviter les renvoi de formulaire afin d'eviter les ajouts supplementaires dans la BDD
-if (isset($_POST['timePeriod']) && isset($_SESSION['message1']) == '') {
+if (isset($_POST['timePeriod'])) {
   $timeSpend = $_POST['timePeriod'];
   $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
   $db->prepExec($sql);
-  $_SESSION['message1'] = "CONGRATULATION ! You've juste register your work";
-
-  header('location:cleaning_homepage.php');
+  $_SESSION['time_period']=$_POST['timePeriod'];
+  
+ 
 }
 
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
+//pour annuler workdone
+if (isset($_POST['cancelWork'])) {
+  
+  $sql = "DELETE FROM `interventions` WHERE id_user IN ($iduser) ORDER BY id_intervention DESC limit 1;";
+  $db->prepExec($sql);
+  $_POST['workdone'] = null;
+  $_POST['timePeriod'] = null;
+  
+  header('location:cleaning_homepage.php');
 }
 
 //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
@@ -82,6 +74,7 @@ if (isset($_POST['reply'])) {
   $_SESSION['disapear'] = 1;
   $_SESSION['id'] = $_POST['parent_id'];
   $_SESSION['destinat'] = $_POST['parentDestinat'];
+  $_SESSION['idAssoc']=$_POST['parentassociation'];
 }
 
 
@@ -90,225 +83,36 @@ if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
     $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
-      VALUES ('$description','$iduser','$destination','$curentdate')";
+    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`id_association`) 
+      VALUES ('$description','$iduser','$destination','$curentdate','$idAssociation')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
-    header('location:association_homepage.php');
+    header('location:cleaning_homepage.php');
   }
 }
 if (isset($_POST['msgreply'])) {
   $destinat = $_SESSION['destinat'];
   $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
+  $idAssoc=$_SESSION['idAssoc'];
+  $userReply=$_SESSION['userReply'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
-  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`)
-     VALUES ('$id','$description','$iduser','$destinat','$curentdate')";
+  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
+     VALUES ('$id','$description',' $iduser','$destinat','$curentdate','$idAssoc')";
   $db->prepExec($sql);
 }
 //pour ne pas recharger la page une fois la réponse envoyée
 if (isset($_POST['replybutton'])) {
-  header('location:association_homepage.php');
+  header('location:cleaning_homepage.php');
 }
 
 //pour retourner au formulaire new comment si on ne veux plus répondre à un message en particulier
 if (isset($_POST['cancelReply'])) {
   $_SESSION['disapear'] = 0;
 }
-//je donne une valeur a message car il n'existe pas avant de cliquer et cela genere une erreur lors du chargement de la page
-if (isset($_SESSION['message'])) {
-  $_SESSION['message1'] = '';
-}
-
-// sur le select je choisi un temps de travail que je viens update a mon workdone
-//puis je creer un message qui indiqueque le travail est réalisé
-//enfin je reinitialise la page pour eviter les renvoi de formulaire afin d'eviter les ajouts supplementaires dans la BDD
-if (isset($_POST['timePeriod']) && isset($_SESSION['message']) == '') {
-  $timeSpend = $_POST['timePeriod'];
-  $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = "CONGRATULATION ! You've juste register your work";
-
-  header('location:cleaning_homepage.php');
-}
-
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
-}
-
-//je recupere la fonction creer en dao pour recuperer les donnnee des comments et les afficher
-
-//si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
-if ($usertype == 'cleaning') {
-  $arrayComment = $db->getCommentsCleaning($usertype);
-  $elementComment = $db->queryRequest($arrayComment);
-  $idcomment=($elementComment[1][0]);
-  $commentid=($elementComment[0][1]);
-  $dateComment = explode('-', $elementComment[0]['time_stamp']);
-  $day = explode(' ', $dateComment[2]);
-  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
-}
 
 
-
-
-if (isset($_POST['msg'])) {
-  if($disapear==false){
-    $description = $_POST['msg'];
-    $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
-    VALUES ('$description','$iduser','$destination','$curentdate')";
-    $db->prepExec($sql);
-    $disapear=false;
-    header('location:cleaning_homepage.php');
-  }else{
-  $description = $_POST['msg'];
-  $destination = $_POST['optradio'];
-  $incrementCommentId=1+$commentid;
-  $sql = "INSERT INTO `comments`(`id_comment`, `comment_id`, `description`, `id_user`, `time_stamp`)
-   VALUES ('6','$incrementCommentId','$description','$iduser','$curentdate')";
-  $db->prepExec($sql);
-  var_dump( $incrementCommentId);
-  $disapear=false;
-  // header('location:cleaning_homepage.php');
-}
-}
-if (isset($_POST['cancel'])) {
-
-  $sql = "DELETE FROM `interventions` WHERE id_user IN ($iduser) ORDER BY id_intervention DESC limit 1;";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = null;
-  $_POST['workdone'] = !isset($_POST['workdone']);
-  $_POST['timePeriod'] = '';
-  header('location:cleaning_homepage.php');
-}
-
-if(isset($_POST['reply'])){
-  $disapear=true;
-  print($disapear);
-}
-//je donne une valeur a message car il n'existe pas avant de cliquer et cela genere une erreur lors du chargement de la page
-if (isset($_SESSION['message'])) {
-  $_SESSION['message1'] = '';
-}
-
-// sur le select je choisi un temps de travail que je viens update a mon workdone
-//puis je creer un message qui indiqueque le travail est réalisé
-//enfin je reinitialise la page pour eviter les renvoi de formulaire afin d'eviter les ajouts supplementaires dans la BDD
-if (isset($_POST['timePeriod']) && isset($_SESSION['message']) == '') {
-  $timeSpend = $_POST['timePeriod'];
-  $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = "CONGRATULATION ! You've juste register your work";
-
-  header('location:cleaning_homepage.php');
-}
-
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
-}
-
-//je recupere la fonction creer en dao pour recuperer les donnnee des comments et les afficher
-
-//si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
-if ($usertype == 'cleaning') {
-  $arrayComment = $db->getCommentsCleaning($usertype);
-  $elementComment = $db->queryRequest($arrayComment);
-  $idcomment=($elementComment[1][0]);
-  $commentid=($elementComment[0][1]);
-  $dateComment = explode('-', $elementComment[0]['time_stamp']);
-  $day = explode(' ', $dateComment[2]);
-  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
-}
-
-
-
-
-if (isset($_POST['msg'])) {
-  if($disapear==false){
-    $description = $_POST['msg'];
-    $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
-    VALUES ('$description','$iduser','$destination','$curentdate')";
-    $db->prepExec($sql);
-    $disapear=false;
-    header('location:cleaning_homepage.php');
-  }else{
-  $description = $_POST['msg'];
-  $destination = $_POST['optradio'];
-  $incrementCommentId=1+$commentid;
-  $sql = "INSERT INTO `comments`(`id_comment`, `comment_id`, `description`, `id_user`, `time_stamp`)
-   VALUES ('6','$incrementCommentId','$description','$iduser','$curentdate')";
-  $db->prepExec($sql);
-  
-  $disapear=false;
-  header('location:cleaning_homepage.php');
-}
-}
-if (isset($_POST['cancel'])) {
-
-  $sql = "DELETE FROM `interventions` WHERE id_user IN ($iduser) ORDER BY id_intervention DESC limit 1;";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = null;
-  $_POST['workdone'] = !isset($_POST['workdone']);
-  $_POST['timePeriod'] = '';
-  header('location:cleaning_homepage.php');
-}
-
-if(isset($_POST['reply'])){
-  $disapear=true;
-  
-}
-//je donne une valeur a message car il n'existe pas avant de cliquer et cela genere une erreur lors du chargement de la page
-if (isset($_SESSION['message'])) {
-  $_SESSION['message1'] = '';
-}
-
-// sur le select je choisi un temps de travail que je viens update a mon workdone
-//puis je creer un message qui indiqueque le travail est réalisé
-//enfin je reinitialise la page pour eviter les renvoi de formulaire afin d'eviter les ajouts supplementaires dans la BDD
-if (isset($_POST['timePeriod']) && isset($_SESSION['message']) == '') {
-  $timeSpend = $_POST['timePeriod'];
-  $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = "CONGRATULATIONS ! You sucessfully registered your work";
-  header('location:cleaning_homepage.php');
-}
-
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
-}
-
-//je recupere la fonction creer en dao pour recuperer les donnnee des comments et les afficher
-
-//si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
-if ($usertype == 'cleaning') {
-  $arrayComment = $db->getCommentsCleaning($commenttype);
-  $elementComment = $db->queryRequest($arrayComment);
-  $dateComment = explode('-', $elementComment[0]['time_stamp']);
-  $day = explode(' ', $dateComment[2]);
-  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
-}
-
-
-
-
-if (isset($_POST['msg'])) {
-  $description = $_POST['msg'];
-  $destination = $_POST['optradio'];
-  $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
-  VALUES ('$description','$iduser','$destination','$curentdate')";
-  $db->prepExec($sql);
-  header('location:cleaning_homepage.php');
-}
-
-
+$_SESSION['homepage']='cleaning_homepage.php';
 ?>
 
 <!DOCTYPE html>
@@ -331,15 +135,15 @@ if (isset($_POST['msg'])) {
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Work</a>
+          <a class="nav-link" href="calendar/calendar.php">Calendar</a>
         </li>
       </ul>
       <span class="navbar-text">
         <form action="logout.php" method="post">
-          <a class="nav-link" href="#" style="background:#ecb21f; font-size:1em"><button name='logout' class='btn' type='submit' onchange='this.form.submit()'>Log out</button></a>
+          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
         </form>
       </span>
     </div>
@@ -357,7 +161,7 @@ if (isset($_POST['msg'])) {
             <div class="lead row ">
               <h3 class="display-8 text-light">Did you work today ?</h3>
               <div>
-                <button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px" type="submit" <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null || isset($_POST['cancelWork']) == '') {
+                <button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px" type="submit" <?php if ( isset($_POST['timePeriod']) && isset($_POST['cancelWork'])=='') {
                                                                                                                 ?> disabled <?php }
                                                                                                                             ?> onchange="this.form.submit()" name="workdone" id='workdone'>WORK DONE</button>
               </div>
@@ -375,7 +179,7 @@ if (isset($_POST['msg'])) {
                   </select>
                 <?php } ?>
               </div>
-              <?php if (isset($_POST['cancelWork']) == '' && isset($_POST['timePeriod'])) { ?>
+              <?php if ( isset($_POST['timePeriod']) && $_SESSION['time_period']!=null) { ?>
                 <div class="alert alert-warning alert-dismissible fade show darker" role="alert">
                   <p class="lead"> <?php print("CONGRATULATION !") ?><br> <?php print("You've been working the " . $dateMessage); ?> </p>
                   <form method="post">
@@ -401,14 +205,15 @@ if (isset($_POST['msg'])) {
             <?php
             foreach ($elementComment as $row) {
               $idComent = $row['id_comment'];
-              if ($row['id_comment'] != null && $row['comment_id'] == 0) { ?>
+              if ($row['id_comment'] != null) { ?>
                 <form method="post">
                   <div class="darker mt-4 text-justify">
                     <!-- //si on veut ajouter un avatar aux utilisateurs -->
                     <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                    <h4><?php print $row['first_name']; ?></h4>
+                    <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
                     <p><?php print $row['description']; ?></p><br>
-                    <input type="hidden" name="parentDestinat" value="<?php print $row['destination']; ?>">
+                    <input type="hidden" name="parentassociation" value="<?php print $row['id_association']; ?>">
+                    <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
                     <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
                     <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
                     <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='reply' class="btn" onchange="this.form.submit()">
@@ -422,7 +227,7 @@ if (isset($_POST['msg'])) {
                       <div class="darker mt-4 text-end response">
                         <!-- //si on veut ajouter un avatar aux utilisateurs -->
                         <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                        <h4><?php print $row['first_name']; ?></h4>
+                        <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
                         <p><?php print $row['description']; ?></p><br>
                         <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
                       </div>
@@ -440,7 +245,7 @@ if (isset($_POST['msg'])) {
                   <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <div class="form-group">
-                  <button name="replybutton" type="submit" onchange="this.form.submit()" id="post" class="btn">Post Reply</button>
+                  <button name="replybutton" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" type="submit" onchange="this.form.submit()" id="post" class="btn">POST REPLY</button>
                   <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name='cancelReply' class="btn" onchange="this.form.submit()">CANCEL REPLY</button>
 
                 </div>
@@ -468,7 +273,7 @@ if (isset($_POST['msg'])) {
                 </div>
 
                 <div class="form-group">
-                  <button type="submit" onchange="this.form.submit()" id="post" name="postinfo" class="btn">Post Message</button>
+                  <button type="submit" onchange="this.form.submit()" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" id="post" name="postinfo" class="btn">Post Message</button>
                 </div>
               </div>
             </form>
@@ -476,12 +281,7 @@ if (isset($_POST['msg'])) {
         </div>
       </div>
     </section>
-    <section class="container">
-              
-              <h1>Calendar</h1>
-              <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
-
-    </section>
+   
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>    <script type="text/javascript" src="script.js"></script>

@@ -1,5 +1,3 @@
-SELECT * FROM `person` LEFT JOIN association ON(person.id_association=association.id_association) LEFT JOIN comments ON(person.id_user=comments.id_user);
-
 <?php
 session_start();
 require_once 'connection.php';
@@ -15,6 +13,8 @@ $iduser = $infoAdmin[0][0];
 $usertype = $infoAdmin[0][3];
 //id comment .
 $idcomment= $infoAdmin[0][7];
+//id association
+$idAssociation=$infoAdmin[0][6];
 //j'appelle la date du jour
 date_default_timezone_set("Europe/Paris");
 $date = new DateTime('now');
@@ -26,28 +26,21 @@ $dateMessage = $date->format('m/d/Y');
 $disapear = false;
 
 $_SESSION['disapear'] = 0;
-// en cliquant sur bouton logout je detruit les variables sessions et je reviens a la page de demarrage
-if (isset($_POST['logout'])) {
-  session_destroy();
-  header('location:index.php');
-}
+
 
 
 //voir si les commentaires existent
 $arrayComment = $db->getCommentsAdmin($usertype);
   $elementComment = $db->queryRequest($arrayComment);
   $idCommentExist=$elementComment[0][0];
-//si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
-if ($usertype == 'admin') {
-  $arrayComment = $db->getCommentsAdmin($usertype);
-  $elementComment = $db->queryRequest($arrayComment);
+
   //recupere sql pour les réponses car order different
   $arrayResponse = $db->getCommentsResponsAdmin($usertype);
   $elementResponse = $db->queryRequest($arrayResponse);
   $dateComment = explode('-', $elementComment[0]['time_stamp']);
   $day = explode(' ', $dateComment[2]);
   $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
-}
+
 
 //obtenir nom assoc et id
 $arrayInfoAssoc = $db->getAssociations($usertype);
@@ -57,7 +50,9 @@ $arrayInfoAssoc = $db->getAssociations($usertype);
 if (isset($_POST['reply'])) {
   $_SESSION['disapear'] = 1;
   $_SESSION['id'] = $_POST['parent_id'];
-  $_SESSION['destinat'] = $_POST['parentDestinat'];
+  $_SESSION['typeUser'] = $_POST['parentDestinat'];
+  $_SESSION['idAssoc']=$_POST['parentassociation'];
+  
 }
 
 // ecrire un nouveau commentaire avec recuperation valeur et donne valeur pour disapear faire apparaitre soit l'un
@@ -66,20 +61,21 @@ if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
     $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`) 
-      VALUES ('$description','$iduser','$destination','$curentdate')";
+    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`id_association`) 
+      VALUES ('$description','$iduser','$destination','$curentdate','$idAssociation')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
     header('location:admin_homepage.php');
   }
 }
 if (isset($_POST['msgreply'])) {
-  $destinat = $_SESSION['destinat'];
+  $TypeUser = $_SESSION['typeUser'];
   $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
+  $idAssoc=$_SESSION['idAssoc'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
-  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`)
-     VALUES ('$id','$description','$iduser','$destinat','$curentdate')";
+  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
+     VALUES ('$id','$description','$iduser','$TypeUser','$curentdate','$idAssoc')";
   $db->prepExec($sql);
 }
 //pour ne pas recharger la page une fois la réponse envoyée
@@ -91,7 +87,8 @@ if (isset($_POST['replybutton'])) {
 if (isset($_POST['cancelReply'])) {
   $_SESSION['disapear'] = 0;
 }
-
+$_SESSION['homepage']='admin_homepage.php';
+print($_SESSION['homepage']);
 ?>
 
 <!DOCTYPE html>
@@ -114,15 +111,21 @@ if (isset($_POST['cancelReply'])) {
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="calendar/calendar.php">Calendar</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Work</a>
+          <a class="nav-link" href="gestion_personne.php">info users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gestion_association.php">info associations</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gestion_places.php">info places</a>
         </li>
       </ul>
       <span class="navbar-text">
         <form method="post">
-          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em"><button name='logout' class='btn' type='submit'>Log out</button></a>
+          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
         </form>
       </span>
     </div>
@@ -135,10 +138,10 @@ if (isset($_POST['cancelReply'])) {
 
     </section>
 
-<section class="container">
+<!-- <section class="container">
               <h1>Calendar</h1>
               <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
-</section>  
+</section>   -->
 
 
     <hr>
@@ -151,14 +154,15 @@ if (isset($_POST['cancelReply'])) {
             <?php 
             foreach ($elementComment as $row) {
               $idComent = $row['id_comment'];
-              if ($row['id_comment'] != null && $row['comment_id'] == 0) { ?>
+              if ($row['id_comment'] != null && $row['comment_id']==0) { ?>
                 <form method="post">
                   <div class="darker mt-4 text-justify">
                     <!-- //si on veut ajouter un avatar aux utilisateurs -->
                     <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
                     <h4><?php print $row['first_name']; ?></h4>
                     <p><?php print $row['description']; ?></p><br>
-                    <input type="hidden" name="parentDestinat" value="<?php print $row['destination']; ?>">
+                    <input type="hidden" name="parentassociation" value="<?php print $row['id_association']; ?>">
+                    <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
                     <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
                     <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
                     <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
@@ -175,14 +179,27 @@ if (isset($_POST['cancelReply'])) {
                 <div class="darker mt-4 text-end response">
                   <!-- //si on veut ajouter un avatar aux utilisateurs -->
                   <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
-                  <h4><?php print $row['first_name']; ?></h4>
+                  <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
                   <p><?php print $row['description']; ?></p><br>
                   <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
                 </div>
             <?php }
                 } ?>
-          <?php } ?>
-        <?php }?> 
+          <?php } else{ 
+                foreach ($elementResponse as $row) {
+                  if ($idComent == $row['comment_id']) { ?>
+                <div class="darker mt-4 text-end response">
+                  <!-- //si on veut ajouter un avatar aux utilisateurs -->
+                  <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+                  <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
+                  <p><?php print $row['description']; ?></p><br>
+                  <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                </div>
+            <?php }
+                } ?>
+
+             <?php } 
+                     }?> 
           </div>
         </div>
       </div>
@@ -195,17 +212,18 @@ if (isset($_POST['cancelReply'])) {
                   <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <div class="form-group">
-                  <button type="submit"  name="replybutton" onchange="this.form.submit()" id="post" class="btn">Post Reply</button>
+                  <button type="submit"  style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name="replybutton" onchange="this.form.submit()" id="post" class="btn">POST REPLY</button>
                   <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name='cancelReply' class="btn" onchange="this.form.submit()">CANCEL REPLY</button>
 
                 </div>
               </div>
+              
             </form>
 
             <form id="algin-form" method="post" <?php if ($_SESSION['disapear'] == 1) { ?>hidden <?php } ?>>
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
-                  <h4>Leave a message</h4>
+                  <h4 class="text-light ">Leave a message</h4>
                   <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <label>Choose your recipient</label>
@@ -218,7 +236,7 @@ if (isset($_POST['cancelReply'])) {
                   <label class="form-check-label" for="radio2"></label>
                   <div>
                     
-                  <select name="nameAssoc" onchange="this.form.submit()">
+                  <select name="nameAssoc">
                   <?php foreach( $elementAssoc as $row){?>
                     <option value='<?php print($row['id_association']); ?>'><?php print($row['name_association']); ?></option>
                     <?php }?>
@@ -232,13 +250,15 @@ if (isset($_POST['cancelReply'])) {
                 </div>
 
                 <div class="form-group">
-                  <button type="submit" onchange="this.form.submit()" id="postinfo" name="postinfo" class="btn">Post Message</button>
+                  <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" onchange="this.form.submit()" id="postinfo" name="postinfo" class="btn">Post Message</button>
                 </div>
               </div>
+              
             </form>
           </div>
         </div>
       </div>
+     
     </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script type="text/javascript" src="script.js"></script>

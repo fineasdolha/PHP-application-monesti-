@@ -1,7 +1,35 @@
 <?php
         session_start();
         require_once('../connection.php');
-?>
+        $arraySession=array();
+        $arraySession= $_SESSION;
+        foreach($arraySession as $row){
+           
+        }
+
+        $db = new DAO;
+        $db -> connection();
+        $sql = 'SELECT * FROM `reservation`';
+        $reservations = $db -> queryRequest($sql);
+        $sched_res = [];
+        
+        foreach($reservations as $row){
+            $row['string_start_datetime'] = date("F d, Y h:i A",strtotime($row['start_datetime']));
+            $row['string_end_datetime'] = date("F d, Y h:i A",strtotime($row['end_datetime']));
+            $sched_res[$row['id_reservation']] = $row;
+    
+        }
+        
+        $user_type= $_SESSION['user_type'];  
+       
+        
+    
+
+
+//       
+// ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,24 +48,27 @@
     
 </head>
 <body style="background-color: rgba(16, 46, 46, 1) !important;">
-        <?php
-        $db = new DAO;
-        $db -> connection();
-        $sql = 'SELECT * FROM `reservation`';
-        $reservations = $db -> queryRequest($sql);
-        $sched_res = [];
+<nav class="navbar navbar-expand-lg navbar-dark px-5" style="border:1px solid white">
+    <a class="navbar-brand" href="#">Monestié</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="../<?php print($_SESSION['homepage']);?>">Home</a>
+        </li>
         
-        foreach($reservations as $row){
-            $row['string_start_datetime'] = date("F d, Y h:i A",strtotime($row['start_datetime']));
-            $row['string_end_datetime'] = date("F d, Y h:i A",strtotime($row['end_datetime']));
-            $sched_res[$row['id_reservation']] = $row;
-    
-        }
-        
-        $user_type= $_SESSION['user_type'];  
-       
-        ?>
-        <?php if(isset($_SESSION['message']) && $_SESSION['message'] != ''){ ?>
+      </ul>
+      <span class="navbar-text">
+        <form method="post">
+          <a class="nav-link" href="../logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
+        </form>
+      </span>
+    </div>
+  </nav>
+
+  <?php if(isset($_SESSION['message']) && $_SESSION['message'] != ''){ ?>
         <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
             <?php echo $_SESSION['message']; 
                 
@@ -46,9 +77,9 @@
               <span aria-hidden="true">&times;</span>
             </button>
         </div>  
-    <?php }  ?>
-        
-        <div class="container py-5">
+    <?php } ?>
+
+  <div class="container py-5">
         <h1 class="text-center text-light py-5">Reservation calendar for the <span id="department"><?php print $user_type ?></span> department</h1>
         <div class="row">
             <div class="col-md-9" id="calendar-wrapper">
@@ -131,6 +162,11 @@
             </div>
         </div>
     </div>    
+
+
+
+
+
 <?php $_SESSION['message']=''?>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
