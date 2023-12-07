@@ -149,7 +149,7 @@ class DAO {
         $sqluser = 'SELECT * FROM `docs` 
         LEFT JOIN reservation ON(reservation.id_reservation=docs.id_reservation)
         LEFT JOIN association ON(association.id_association=docs.id_association) WHERE name_association LIKE "'.$nameAssoc.'%"';
-   
+   print($sqluser);
         return $sqluser;
     }
     

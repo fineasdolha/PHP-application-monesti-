@@ -162,11 +162,11 @@ $_SESSION['homepage']='cleaning_homepage.php';
               <div>
                 <button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px" type="submit" <?php if ( isset($_POST['timePeriod']) && isset($_POST['cancelWork'])=='') {
                                                                                                                 ?> disabled <?php }
-                                                                                                                            ?> onchange="this.form.submit()" name="workdone" id='workdone'>WORK DONE</button>
+                                                                                                                            ?>onchange="this.form.submit()"  name="workdone" id='workdone'>WORK DONE</button>
               </div>
               <div>
-                <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null) { ?>
-                  <select name="timePeriod" onchange="this.form.submit()" required>
+                <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null) {?>
+                  <select name="timePeriod" required onchange="this.form.submit()">
                     <option value=''>how many hours ?</option>
                     <option value='30 min'>30 min</option>
                     <option value='1h30'>1h30</option>
@@ -177,6 +177,7 @@ $_SESSION['homepage']='cleaning_homepage.php';
                     <option value='4h'>4h</option>
                   </select>
                 <?php } ?>
+              <?php if(isset($_POST['timePeriod'])&& $_POST['timePeriod'] !=null){$_POST['workdone']='ready';} ?>
               </div>
               <?php if ( isset($_POST['timePeriod']) && $_SESSION['time_period']!=null) { ?>
                 <div class="alert alert-warning alert-dismissible fade show darker" role="alert">

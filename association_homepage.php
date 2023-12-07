@@ -154,14 +154,14 @@ $_SESSION['homepage']='association_homepage.php';
     <div class="carousel-inner">
     <!--pour que la caroussel fonctionne il faut mettre active sur la première affiche donc ele ne sera activé que sur la première-->
     <?php $iteration=0;
-    foreach($elementDocAssoc as $row){ ?>
+    foreach($elementDocAssoc as $row){?>
       <div class="carousel-item 
       <?php if($iteration==0){ ?>
       active
       <?php }?>
       ">
         <div class="item__third">
-          <img src="<?php print $row['file']; ?>" class="d-block mx-auto" style="width:300px;margin-bottom:160px" alt="">
+          <img src="calendar/<?php print $row['file']; ?>" class="d-block mx-auto" style="width:300px;margin-bottom:160px" alt="">
           
           <div class="carousel-caption d-none d-md-block">
             <h5><?php print $row['title']; ?></h5>
@@ -188,6 +188,10 @@ $_SESSION['homepage']='association_homepage.php';
       </article>
     </section>
     <hr>
+    <section class="container text-light">
+              <h1>Calendar</h1>
+              <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
+</section>  
     <section>
       <div class="container">
         <div class="row">
