@@ -1,6 +1,4 @@
-document.getElementById('timePeriod').addEventListener("change",function() {
-	document.getElementById('formClean').submit();
-});
+
 
 function disableSelect(){
 	document.getElementById('association-choice').removeAttribute('required');
@@ -15,5 +13,4 @@ function enableSelect(){
 	document.getElementById('choice-none').removeAttribute('selected');
 	document.querySelector('div.mb-3 option').setAttribute('selected','');
 }
-
 

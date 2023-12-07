@@ -61,8 +61,9 @@ if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
     $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`id_association`) 
-      VALUES ('$description','$iduser','$destination','$curentdate','$idAssociation')";
+    $associd=$_POST['nameAssoc'];
+    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`association_id`) 
+      VALUES ('$description','$iduser','$destination','$curentdate','$associd')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
     header('location:admin_homepage.php');
@@ -74,7 +75,7 @@ if (isset($_POST['msgreply'])) {
   $id = $_SESSION['id'];
   $idAssoc=$_SESSION['idAssoc'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
-  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
+  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`association_id`)
      VALUES ('$id','$description','$iduser','$TypeUser','$curentdate','$idAssoc')";
   $db->prepExec($sql);
 }
@@ -88,7 +89,9 @@ if (isset($_POST['cancelReply'])) {
   $_SESSION['disapear'] = 0;
 }
 $_SESSION['homepage']='admin_homepage.php';
-print($_SESSION['homepage']);
+//pour la creation d'un json pour js
+$infoAssoc = $db->getAllAssociation();
+
 ?>
 
 <!DOCTYPE html>
@@ -212,7 +215,7 @@ print($_SESSION['homepage']);
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
                   <h4>Leave a message</h4>
-                  <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                  <textarea required name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <div class="form-group">
                   <button type="submit"  style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" name="replybutton" onchange="this.form.submit()" id="post" class="btn">POST REPLY</button>
@@ -227,28 +230,30 @@ print($_SESSION['homepage']);
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
                   <h4 class="text-light ">Leave a message</h4>
-                  <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                  <textarea required name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <label>Choose your recipient</label>
                 <div class="form-check text-light ">
-                  <input type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
+                  <input required type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
                   <label class=" form-check-label" for="radio1"></label>
                 </div>
                 <div class="form-check text-light">
-                  <input type="radio" class="form-check-input" id="radio2" name="optradio" value="association">Association
+                  <input required type="radio" class="form-check-input" id="radio2" name="optradio" value="association">Association
                   <label class="form-check-label" for="radio2"></label>
                   <div>
                     
-                  <select name="nameAssoc">
+                  <select required name="nameAssoc">
+                    <option value="">choose an association</option>
+                    <option value="0">None</option>
                   <?php foreach( $elementAssoc as $row){?>
                     <option value='<?php print($row['id_association']); ?>'><?php print($row['name_association']); ?></option>
-                    <?php }?>
+                    <?php } ?>
                   </select>
                   
                   </div>
                 </div>
                 <div class="form-check text-light">
-                  <input type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
+                  <input required type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
                   <label class="form-check-label" for="radio3"></label>
                 </div>
 
@@ -262,9 +267,9 @@ print($_SESSION['homepage']);
         </div>
       </div>
      
-    </section>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="script.js"></script>
+    </section><script type="text/javascript" src="script.js"> </script>
 
 </body>
 

@@ -70,7 +70,7 @@ if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
     $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`id_association`) 
+    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`association_id`) 
       VALUES ('$description','$iduser','$destination','$curentdate','$userassociation')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
@@ -84,9 +84,10 @@ if (isset($_POST['msgreply'])) {
   $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
   $idAssoc=$_SESSION['idAssoc'];
+  var_dump($_SESSION['idAssoc']);
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
-  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
-     VALUES ('$id','$description','$iduser','$destinat','$curentdate','$idAssoc)";
+  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`association_id`)
+     VALUES ('$id','$description','$iduser','$destinat','$curentdate','$idAssoc')";
   $db->prepExec($sql);
 }
 //pour ne pas recharger la page une fois la réponse envoyée
@@ -197,14 +198,15 @@ $_SESSION['homepage']='association_homepage.php';
 
 <?php foreach ($elementComment as $row) {
   $idComent = $row['id_comment'];
-  if ($row['id_comment'] != null  && $userassociation == $row['id_association']) { ?>
+  
+  if ($row['id_comment'] != null  && $userassociation == $row['association_id']) {?>
     <form method="post">
       <div class="darker mt-4 text-justify ">
         <!-- //si on veut ajouter un avatar aux utilisateurs -->
         <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
         <h4 class="text-light"><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
         <p><?php print $row['description']; ?></p><br>
-        <input type="hidden" name="parentassociation" value="<?php print $row['id_association']; ?>">
+        <input type="hidden" name="parentassociation" value="<?php print $row['association_id']; ?>">
         <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
         <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
         <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
@@ -236,7 +238,7 @@ $_SESSION['homepage']='association_homepage.php';
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
                   <h4 class="text-light ">Leave a message</h4>
-                  <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                  <textarea required name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <div class="form-group">
                   <button type="submit" name="replybutton" onchange="this.form.submit()" class="btn" style="background:#ecb21f ;padding-top:5px;padding-bottom:5px; font-size:0.7em;margin-bottom:10px; margin-top:10px">POST REPLY</button>
@@ -248,19 +250,19 @@ $_SESSION['homepage']='association_homepage.php';
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
                   <h4 class="text-light ">Leave a message</h4>
-                  <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                  <textarea required name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <label>Choose your recipient</label>
                 <div class="form-check text-light ">
-                  <input type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
+                  <input required type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
                   <label class=" form-check-label" for="radio1"></label>
                 </div>
                 <div class="form-check text-light">
-                  <input type="radio" class="form-check-input" id="radio2" name="optradio" value="association">My association
+                  <input required type="radio" class="form-check-input" id="radio2" name="optradio" value="association">My association
                   <label class="form-check-label" for="radio2"></label>
                 </div>
                 <div class="form-check text-light">
-                  <input type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
+                  <input required type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
                   <label class="form-check-label" for="radio3"></label>
                 </div>
 

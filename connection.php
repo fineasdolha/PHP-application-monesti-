@@ -143,13 +143,13 @@ class DAO {
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne appartient au nettoyage.
     public function getCommentsCleaning($destination) {
-        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY time_stamp DESC';
+        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY id_comment DESC';
         return $sqluser;
     }
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination, time_stamp DESC';
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY time_stamp, destination  DESC';
       
         return $sqluser;
     }

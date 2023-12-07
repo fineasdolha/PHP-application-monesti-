@@ -82,8 +82,9 @@ if (isset($_POST['postinfo'])) {
   if ($_SESSION['disapear'] == 0) {
     $description = str_replace("'", "\'", $_POST['msg']);
     $destination = $_POST['optradio'];
-    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`id_association`) 
-      VALUES ('$description','$iduser','$destination','$curentdate','$idAssociation')";
+    $associd=$_POST['nameAssoc'];
+    $sql = "INSERT INTO `comments`( `description`, `id_user`, `destination`, `time_stamp`,`association_id`) 
+      VALUES ('$description','$iduser','$destination','$curentdate','$associd')";
     $db->prepExec($sql);
     $_SESSION['disapear'] = 0;
     header('location:cleaning_homepage.php');
@@ -96,7 +97,7 @@ if (isset($_POST['msgreply'])) {
   $idAssoc = $_SESSION['idAssoc'];
   $userReply = $_SESSION['userReply'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
-  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
+  $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`association_id`)
      VALUES ('$id','$description',' $iduser','$destinat','$curentdate','$idAssoc')";
   $db->prepExec($sql);
 }
@@ -244,7 +245,7 @@ $_SESSION['homepage'] = 'cleaning_homepage.php';
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
                   <h4>Leave a message</h4>
-                  <textarea name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                  <textarea required name="msgreply" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <div class="form-group">
                   <button name="replybutton" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px; margin-top:10px" type="submit" onchange="this.form.submit()" id="post" class="btn">POST REPLY</button>
@@ -258,19 +259,30 @@ $_SESSION['homepage'] = 'cleaning_homepage.php';
               <div class="darker mt-4 text-justify">
                 <div class="form-group">
                   <h4>Leave a message</h4>
-                  <textarea name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
+                  <textarea required name="msg" maxlength="60" cols="30" rows="5" class="form-control text-light" style="background-color: black;"></textarea>
                 </div>
                 <label>Choose your recipient</label>
                 <div class="form-check text-light ">
-                  <input type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
+                  <input required type="radio" class="  form-check-input" id="radio1" name="optradio" value="admin">Administrator
                   <label class=" form-check-label" for="radio1"></label>
                 </div>
                 <div class="form-check text-light">
-                  <input type="radio" class="form-check-input" id="radio2" name="optradio" value="association">My association
+                  <input required type="radio" class="form-check-input" id="radio2" name="optradio" value="association">Association
                   <label class="form-check-label" for="radio2"></label>
+                  <div>
+                    
+                  <select required name="nameAssoc">
+                    <option value="">choose an association</option>
+                    <option value="0">None</option>
+                  <?php foreach( $elementAssoc as $row){?>
+                    <option value='<?php print($row['id_association']); ?>'><?php print($row['name_association']); ?></option>
+                    <?php } ?>
+                  </select>
+                  
+                  </div>
                 </div>
                 <div class="form-check text-light">
-                  <input type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
+                  <input required type="radio" class="form-check-input" id="radio3" name="optradio" value="cleaning">Cleaning staff
                   <label class="form-check-label" for="radio3"></label>
                 </div>
 
