@@ -3,11 +3,11 @@ session_start();
 require_once 'connection.php';
 $db = new DAO();
 $db->connection();
-$sqlassoc = $db->getAssociations();
-$associationList = $db->queryRequest($sqlassoc);
+$sqlassoc = $db -> getAssociations();
+$associationList = $db -> queryRequest($sqlassoc);
 
-$infoPerson = $db->getAllPerson();
-$infoAssoc = $db->getAllAssociation();
+ $infoPerson = $db->getAllPerson();
+
 
 
 ?>

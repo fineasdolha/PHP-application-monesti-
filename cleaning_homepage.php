@@ -25,7 +25,6 @@ $dateMessage = $date->format('m/d/Y');
 //pour changer de formulaire d'envoi en fonction reponse ou nouveau message variable pour condition
 $_SESSION['disapear'] = 0;
 
-
 // je clique sur le bouton workdone cela insert dans BDD l'id de la personne qui l'utilise et la date/heure du jour
 if (isset($_POST['workdone'])) {
   $sql = "INSERT INTO `interventions`(`id_user`, `time_stamp`) 
