@@ -51,30 +51,30 @@
   </div>
   <label for="radio-container" class="form-label my-2">You are registering as :</label>
   <div id="radio-container" class="d-flex justify-content-start p" >
-  <div class="form-check mr-2 my-2">
+  <!-- <div class="form-check mr-2 my-2">
   <input onchange="disableSelect()" class="form-check-input" type="radio" name="entity" id="admin" value="admin" required>
   <label class="form-check-label" for="admin">
     Admin
   </label>
-</div>
+</div> -->
 <div class="form-check m-2 my-2 ">
-  <input onchange="enableSelect()" class="form-check-input" type="radio" name="entity" id="association" value="association" required>
+  <input  class="form-check-input" type="radio" name="entity" checked id="association" value="association" required>
   <label class="form-check-label" for="association">
     Association
   </label>
 </div>
-<div class="form-check m-2 my-2">
+<!-- <div class="form-check m-2 my-2">
   <input onchange="disableSelect()" class="form-check-input" type="radio" name="entity" id="cleaning" value="cleaning" required>
   <label class="form-check-label" for="cleaning">
   Cleaning
   </label>
-</div>
+</div> -->
 </div>
 <div class="mb-3">
          <label for="association-choice">What is the name of your association?</label>
          <select id="association-choice" class="form-control " name="association-choice" required>
          <option value="">Choose an option</option>
-         <option id='choice-none' value="0">None</option>
+         <!-- <option id='choice-none' value="0">None</option> -->
          <?php foreach($associationList as $row){?>
               
              <option value="<?php print $row['id_association'];?>"><?php print $row['name_association'];?></option>

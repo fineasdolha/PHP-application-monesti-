@@ -13,7 +13,7 @@ $usertype = $infoPerson[0][3];
 //categorie de destination comment admin,cleaning assoc.
 $userassociation = $infoPerson[0][6];
 //nom assoc user
-$userAssocName=$infoPerson[0][15];
+$userAssocid=$infoPerson[0]['id_association'];
 
 //id comment .
 $idcomment = $infoPerson[0][7];
@@ -36,7 +36,6 @@ if (isset($_POST['logout'])) {
   //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
   if ($usertype == 'association') {
     $arrayComment = $db->getCommentsAsso($usertype);
-    
     $elementComment = $db->queryRequest($arrayComment);
   }
 //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
@@ -53,7 +52,7 @@ if ($usertype == 'association') {
 }
 
 //requete pour recup info doc pour gestion carousel
-$arrayDocsAssoc = $db->getDocAssoc($userAssocName);
+$arrayDocsAssoc = $db->getDocAssoc($userAssocid);
 $elementDocAssoc = $db->queryRequest($arrayDocsAssoc);
 
 //si on clique sur bouton reply et on recupère les valeurs des input du commentaire choisi
@@ -100,6 +99,7 @@ if (isset($_POST['cancelReply'])) {
   $_SESSION['disapear'] = 0;
 }
 $_SESSION['homepage']='association_homepage.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -122,7 +122,7 @@ $_SESSION['homepage']='association_homepage.php';
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link active ">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="calendar/calendar.php">Calendar</a>
@@ -188,10 +188,7 @@ $_SESSION['homepage']='association_homepage.php';
       </article>
     </section>
     <hr>
-    <section class="container text-light">
-              <h1>Calendar</h1>
-              <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
-</section>  
+    
     <section>
       <div class="container">
         <div class="row">
@@ -223,7 +220,7 @@ $_SESSION['homepage']='association_homepage.php';
             <!-- //si on veut ajouter un avatar aux utilisateurs -->
             <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
             <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
-            <p><?php print $row['user_type']; ?></p><br>
+            <p><?php print $row['description']; ?></p><br>
             <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
           </div>
       <?php }
@@ -278,11 +275,12 @@ $_SESSION['homepage']='association_homepage.php';
     </section>
   </section>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="script.js"></script>
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="script.js"></script>
 </body>
 
 </html>

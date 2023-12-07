@@ -8,14 +8,24 @@ $associationList = $db->queryRequest($sqlassoc);
 
 $infoAssoc = $db->getAllAssociation();
 
-if(isset($_POST['changeAssoc'])){
-$name=$_POST['name'];
-$city=$_POST['city'];
-$address=$_POST['address'];
-$sql ="INSERT INTO `association`( `name_association`, `city_association`, `address_association`) VALUES ('$name','$city','$address')";
-$db->prepExec($sql);
-$_SESSION['message-error'] = 'Your association is registred';
-header('location:gestion_association.php');
+if (isset($_POST['changeAssoc'])) {
+    $name = $_POST['name'];
+    $city = $_POST['city'];
+    $address = $_POST['address'];
+    $sql = "INSERT INTO `association`( `name_association`, `city_association`, `address_association`) VALUES ('$name','$city','$address')";
+    $db->prepExec($sql);
+    $_SESSION['message-error'] = 'Your association is registred';
+    header('location:gestion_association.php');
+}
+
+if (isset($_POST['deleteAssoc'])) {
+    $id_association = $_POST['idassoc'];
+
+
+    $sql = "DELETE FROM `association` WHERE id_association LIKE '" . $id_association . "'";
+    $db->prepExec($sql);
+    $_SESSION['message-error'] = 'Your association is erased';
+    header('location:gestion_association.php');
 }
 
 ?>
@@ -51,6 +61,18 @@ header('location:gestion_association.php');
                     <li class="nav-item">
                         <a class="nav-link" href="calendar/calendar.php">Calendar</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gestion_personne.php">Management users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active " href="gestion_association.php">Management associations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gestion_places.php">Management places</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Management cleaning</a>
+                    </li>
                 </ul>
                 <span class="navbar-text">
                     <form method="post">
@@ -73,11 +95,13 @@ header('location:gestion_association.php');
             </div>
         <?php } ?>
     </section>
-
+    <section>
+        <h1>Management association</h1>
+    </section>
 
     <!-- table for association -->
-    <section class="tableDesign">
-        <table id="association" class="display text-light" style="width:100%">
+    <section class="tableDesign" style="margin-left:200px; margin-top:50px;margin-right:200px">
+        <table id="association" class="display text-light">
 
         </table>
 
@@ -91,29 +115,35 @@ header('location:gestion_association.php');
                         <h5 class="modal-title" id="staticBackdropLabel">Management association</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body bg-dark">
 
                         <form action="gestion_association.php" method="POST" class="container" style="max-width: 500px;">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
-                                <input name="name" type="text" class="form-control" id="name" required>
+                                <input name="name" type="text" class="form-control" id="name">
                             </div>
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>
-                                <input name="city" type="text" class="form-control" id="city" required>
+                                <input name="city" type="text" class="form-control" id="city">
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address</label>
-                                <input name="address" type="text" class="form-control" id="address" required>
+                                <input name="address" type="text" class="form-control" id="address">
+                            </div>
+                            <div class="mb-3 text-light">
+                                <p>If you want to delete a place, this action is irreversible.</p><br>
+                                <p> Just insert the ID of the place located in the table behind this window. </p>
+                                <label for="idassoc" class="form-label">ID_PLACE</label>
+                                <input name="idassoc" type="number" class="form-control" id="idassoc">
                             </div>
 
+                    </div>
+                    <div>
+                        <button name="changeAssoc" type="submit" onchange="this.form.submit()" class="btn float-end  mt-2" style="background:#ecb21f; font-size:1em;margin-bottom:10px">Register</button>
+                        <button name="deleteAssoc" type="submit" onchange="this.form.submit()" class="btn float-end  mt-2" style="background:#ecb21f; font-size:1em;margin-bottom:10px;margin-right:15px">Delete</button>
 
                     </div>
-<div>
-                    <button name="changeAssoc" type="submit" onchange="this.form.submit()" class="btn float-end  mt-2" style="background:#ecb21f; font-size:1em;margin-bottom:10px">Register</button>
-                    
-</div>
-</form>
+                    </form>
                 </div>
                 <div class="modal-footer">
 
@@ -145,16 +175,16 @@ header('location:gestion_association.php');
                 responsive: true,
 
                 columns: [{
-                        title: 'id_association'
+                        title: 'ID ASSOCIATION'
                     },
                     {
-                        title: 'name_association'
+                        title: 'Association'
                     },
                     {
-                        title: 'city_association'
+                        title: 'city'
                     },
                     {
-                        title: 'address_association'
+                        title: 'address'
                     }
 
                 ],

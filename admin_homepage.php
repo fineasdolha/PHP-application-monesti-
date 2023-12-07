@@ -114,18 +114,21 @@ print($_SESSION['homepage']);
           <a class="nav-link" href="calendar/calendar.php">Calendar</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="gestion_personne.php">info users</a>
+          <a class="nav-link" href="gestion_personne.php">Management users</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="gestion_association.php">info associations</a>
+          <a class="nav-link" href="gestion_association.php">Management associations</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="gestion_places.php">info places</a>
+          <a class="nav-link" href="gestion_places.php">Management places</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="gestion_cleaning.php">Management cleaning</a>
         </li>
       </ul>
       <span class="navbar-text">
         <form method="post">
-          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
+          <a class="btn" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
         </form>
       </span>
     </div>

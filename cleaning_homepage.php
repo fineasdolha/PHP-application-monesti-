@@ -11,10 +11,11 @@ $infoCleaner = $db->getCleaningStaff($_SESSION['user_email']);
 $iduser = $infoCleaner[0][0];
 //categorie de la personne admin,cleaning assoc.
 $usertype = $infoCleaner[0][3];
+
 //id comment .
 $idcomment = $infoCleaner[0][7];
 //id association
-$idAssociation=$infoCleaner[0][6];
+$idAssociation = $infoCleaner[0][6];
 //j'appelle la date du jour
 date_default_timezone_set("Europe/Paris");
 $date = new DateTime('now');
@@ -29,7 +30,7 @@ $_SESSION['disapear'] = 0;
 if (isset($_POST['workdone'])) {
   $sql = "INSERT INTO `interventions`(`id_user`, `time_stamp`) 
   VALUES ('$iduser','$curentdate')";
-  
+
   $db->prepExec($sql);
 }
 
@@ -40,21 +41,20 @@ if (isset($_POST['timePeriod'])) {
   $timeSpend = $_POST['timePeriod'];
   $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
   $db->prepExec($sql);
-  $_SESSION['time_period']=$_POST['timePeriod'];
-  
- 
+  $_SESSION['time_period'] = $_POST['timePeriod'];
 }
 
 //pour annuler workdone
 if (isset($_POST['cancelWork'])) {
-  
+
   $sql = "DELETE FROM `interventions` WHERE id_user IN ($iduser) ORDER BY id_intervention DESC limit 1;";
   $db->prepExec($sql);
   $_POST['workdone'] = null;
   $_POST['timePeriod'] = null;
-  
+
   header('location:cleaning_homepage.php');
 }
+
 
 //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
 if ($usertype == 'cleaning') {
@@ -73,7 +73,7 @@ if (isset($_POST['reply'])) {
   $_SESSION['disapear'] = 1;
   $_SESSION['id'] = $_POST['parent_id'];
   $_SESSION['destinat'] = $_POST['parentDestinat'];
-  $_SESSION['idAssoc']=$_POST['parentassociation'];
+  $_SESSION['idAssoc'] = $_POST['parentassociation'];
 }
 
 
@@ -93,8 +93,8 @@ if (isset($_POST['msgreply'])) {
   $destinat = $_SESSION['destinat'];
   $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
-  $idAssoc=$_SESSION['idAssoc'];
-  $userReply=$_SESSION['userReply'];
+  $idAssoc = $_SESSION['idAssoc'];
+  $userReply = $_SESSION['userReply'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
   $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`id_association`)
      VALUES ('$id','$description',' $iduser','$destinat','$curentdate','$idAssoc')";
@@ -111,7 +111,7 @@ if (isset($_POST['cancelReply'])) {
 }
 
 
-$_SESSION['homepage']='cleaning_homepage.php';
+$_SESSION['homepage'] = 'cleaning_homepage.php';
 ?>
 
 <!DOCTYPE html>
@@ -142,7 +142,7 @@ $_SESSION['homepage']='cleaning_homepage.php';
       </ul>
       <span class="navbar-text">
         <form action="logout.php" method="post">
-          <a class="nav-link" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
+          <a class="btn" href="logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
         </form>
       </span>
     </div>
@@ -160,12 +160,12 @@ $_SESSION['homepage']='cleaning_homepage.php';
             <div class="lead row ">
               <h3 class="display-8 text-light">Did you work today ?</h3>
               <div>
-                <button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px" type="submit" <?php if ( isset($_POST['timePeriod']) && isset($_POST['cancelWork'])=='') {
+                <button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px" type="submit" <?php if (isset($_POST['timePeriod']) && isset($_POST['cancelWork']) == '') {
                                                                                                                 ?> disabled <?php }
-                                                                                                                            ?>onchange="this.form.submit()"  name="workdone" id='workdone'>WORK DONE</button>
+                                                                                                                            ?>onchange="this.form.submit()" name="workdone" id='workdone'>WORK DONE</button>
               </div>
               <div>
-                <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null) {?>
+                <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null) { ?>
                   <select name="timePeriod" required onchange="this.form.submit()">
                     <option value=''>how many hours ?</option>
                     <option value='30 min'>30 min</option>
@@ -177,9 +177,11 @@ $_SESSION['homepage']='cleaning_homepage.php';
                     <option value='4h'>4h</option>
                   </select>
                 <?php } ?>
-              <?php if(isset($_POST['timePeriod'])&& $_POST['timePeriod'] !=null){$_POST['workdone']='ready';} ?>
+                <?php if (isset($_POST['timePeriod']) && $_POST['timePeriod'] != null) {
+                  $_POST['workdone'] = 'ready';
+                } ?>
               </div>
-              <?php if ( isset($_POST['timePeriod']) && $_SESSION['time_period']!=null) { ?>
+              <?php if (isset($_POST['timePeriod']) && $_SESSION['time_period'] != null) { ?>
                 <div class="alert alert-warning alert-dismissible fade show darker" role="alert">
                   <p class="lead"> <?php print("CONGRATULATION !") ?><br> <?php print("You've been working the " . $dateMessage); ?> </p>
                   <form method="post">
@@ -281,10 +283,11 @@ $_SESSION['homepage']='cleaning_homepage.php';
         </div>
       </div>
     </section>
-   
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>    <script type="text/javascript" src="script.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
 
 </html>

@@ -64,7 +64,7 @@
       </ul>
       <span class="navbar-text">
         <form method="post">
-          <a class="nav-link" href="../logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
+          <a class="nav-link float-end " href="../logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
         </form>
       </span>
     </div>

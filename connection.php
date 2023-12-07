@@ -120,6 +120,16 @@ class DAO {
         
     }
 
+    public function getAllIntervention() {  
+        $sqluser = 'SELECT last_name,first_name,time_spend,time_stamp FROM `interventions` LEFT JOIN person ON(person.id_user=interventions.id_user)';
+        $query = $this->connection->prepare($sqluser);
+        $query->execute();
+        
+        $fetch = $query->fetchAll();
+        return $fetch;
+        
+    }
+
     public function getAssocInfo($useremail) {  
         $sqluser = 'SELECT * FROM `person` LEFT JOIN comments ON(person.id_user=comments.id_user)
         LEFT JOIN association ON(person.id_association=association.id_association) WHERE `user_email` LIKE "'.$useremail.'"';
@@ -145,11 +155,11 @@ class DAO {
     }
 
     //je récupere les documents, id reservation, description reservation et titre et info association
-    public function getDocAssoc($nameAssoc) {
+    public function getDocAssoc($idAssoc) {
         $sqluser = 'SELECT * FROM `docs` 
         LEFT JOIN reservation ON(reservation.id_reservation=docs.id_reservation)
-        LEFT JOIN association ON(association.id_association=docs.id_association) WHERE name_association LIKE "'.$nameAssoc.'%"';
-   print($sqluser);
+        LEFT JOIN association ON(association.id_association=docs.id_association) WHERE association.id_association like "'.$idAssoc.'"';
+
         return $sqluser;
     }
     

@@ -3,11 +3,34 @@ session_start();
 require_once 'connection.php';
 $db = new DAO();
 $db->connection();
-$sqlassoc = $db -> getAssociations();
-$associationList = $db -> queryRequest($sqlassoc);
+$sqlassoc = $db->getAssociations();
+$associationList = $db->queryRequest($sqlassoc);
 
- $infoPerson = $db->getAllPerson();
+$infoPerson = $db->getAllPerson();
 
+if (isset($_POST['changeUser'])) {
+  $id_user = $_POST['iduser'];
+  $firstName = $_POST['firstname'];
+  $lastName = $_POST['lastname'];
+  $email = $_POST['email'];
+  $userType = $_POST['entity'];
+  $password = $_POST['password'];
+  $idAsso = $_POST['association-choice'];
+  print($idAsso);
+  $sql = "INSERT INTO `person`(`id_user`, `last_name`, `first_name`, `user_type`, `user_email`, `user_password`, `id_association`)
+   VALUES ('$id_user','$lastName','$firstName','$userType','$email','$password','$idAsso')";
+  $db->prepExec($sql);
+  $_SESSION['message-error'] = 'Your user is registered';
+  header('location:gestion_personne.php');
+}
+
+if (isset($_POST['deleteUser'])) {
+  $id_user = $_POST['iduser'];
+  $sql = "DELETE FROM `person` WHERE id_user LIKE '" . $id_user . "'";
+  $db->prepExec($sql);
+  $_SESSION['message-error'] = 'Your user is erased';
+  header('location:gestion_personne.php');
+}
 
 
 ?>
@@ -43,6 +66,18 @@ $associationList = $db -> queryRequest($sqlassoc);
           <li class="nav-item">
             <a class="nav-link" href="calendar/calendar.php">Calendar</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link active " href="gestion_personne.php">Management users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="gestion_association.php">Management associations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="gestion_places.php">Management places</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="gestion_cleaning.php">Management cleaning</a>
+          </li>
         </ul>
         <span class="navbar-text">
           <form method="post">
@@ -63,7 +98,11 @@ $associationList = $db -> queryRequest($sqlassoc);
         </button>
       </div>
     <?php } ?>
-    <section class="tableDesign">
+
+    <section>
+      <h1>Management user</h1>
+    </section>
+    <section class="tableDesign" style="margin-left:200px; margin-top:50px;margin-right:200px">
       <table id="user" class="display text-light" style="width:100%">
 
       </table>
@@ -78,41 +117,41 @@ $associationList = $db -> queryRequest($sqlassoc);
               <h5 class="modal-title" id="staticBackdropLabel">Management user</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-dark">
 
-              <form action="register_admin.php" method="POST" class="container" style="max-width: 500px;">
+              <form action="gestion_personne.php" method="POST" class="container" style="max-width: 500px;">
                 <div class="mb-3">
-                  <label for="firstName" class="form-label">First name</label>
-                  <input name="firstname" type="text" class="form-control" id="firstName" required>
+                  <label for="firstname" class="form-label">First name</label>
+                  <input name="firstname" type="text" class="form-control" id="firstName">
                 </div>
                 <div class="mb-3">
-                  <label for="lastName" class="form-label">Last name</label>
-                  <input name="lastname" type="text" class="form-control" id="lastName" required>
+                  <label for="lastname" class="form-label">Last name</label>
+                  <input name="lastname" type="text" class="form-control" id="lastName">
                 </div>
                 <div class="mb-3">
                   <label for="inputEmail" class="form-label">Email address</label>
-                  <input name="email" type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" required>
+                  <input name="email" type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
                   <label for="inputPassword1" class="form-label">Password</label>
-                  <input name="password" type="password" class="form-control" id="inputPassword1" required>
+                  <input name="password" type="password" class="form-control" id="inputPassword1">
                 </div>
                 <label for="radio-container" class="form-label my-2">You are registering as :</label>
                 <div id="radio-container" class="d-flex justify-content-start p">
                   <div class="form-check mr-2 my-2">
-                    <input class="form-check-input" type="radio" name="entity" id="admin" value="admin" required>
+                    <input class="form-check-input" type="radio" name="entity" id="admin" value="admin">
                     <label class="form-check-label" for="admin">
                       Admin
                     </label>
                   </div>
                   <div class="form-check m-2 my-2 ">
-                    <input class="form-check-input" type="radio" name="entity" id="association" value="association" required>
+                    <input class="form-check-input" type="radio" name="entity" id="association" value="association">
                     <label class="form-check-label" for="association">
                       Association
                     </label>
                   </div>
                   <div class="form-check m-2 my-2">
-                    <input class="form-check-input" type="radio" name="entity" id="cleaning" value="cleaning" required>
+                    <input class="form-check-input" type="radio" name="entity" id="cleaning" value="cleaning">
                     <label class="form-check-label" for="cleaning">
                       Cleaning
                     </label>
@@ -120,17 +159,25 @@ $associationList = $db -> queryRequest($sqlassoc);
                 </div>
                 <div class="mb-3">
                   <label for="association-choice">What is the name of your association?</label>
-                  <select id="association-choice" class="form-control " name="association-choice" required>
+                  <select id="association-choice" class="form-control " name="association-choice">
                     <option value="">Choose an option</option>
                     <option value="0">None</option>
                     <?php foreach ($associationList as $row) { ?>
 
-                      <option value="<?php print $row['id_association']; ?>"><?php print $row['name_association']; ?></option>
+                      <option name="choice" value="<?php print $row['id_association']; ?>"><?php print $row['name_association']; ?></option>
                     <?php } ?>
                   </select>
                 </div>
+                <div class="mb-3 text-light">
+                  <p>If you want to delete a place, this action is irreversible.</p><br>
+                  <p> Just insert the ID of the place located in the table behind this window. </p>
+                  <label for="iduser" class="form-label">ID_USER</label>
+                  <input name="iduser" type="number" class="form-control" id="iduser">
+                </div>
 
-                <button name="login" type="submit" style="background:#ecb21f; font-size:1em;margin-bottom:10px;margin-right:50px" class="btn mt-2 float-end">Register</button>
+
+                <button name="deleteUser" type="submit" onchange="this.form.submit()" class="btn float-end  mt-2" style="background:#ecb21f; font-size:1em;margin-bottom:10px;margin-right:15px">Delete</button>
+                <button name="changeUser" type="submit" style="background:#ecb21f; font-size:1em;margin-bottom:10px;margin-right:50px" class="btn mt-2 float-end">Register</button>
               </form>
             </div>
             <div class="modal-footer">
@@ -143,11 +190,11 @@ $associationList = $db -> queryRequest($sqlassoc);
     <section>
 
       <button type="button" class="btn float-end mt-3 " style="background:#ecb21f; font-size:1em;margin-bottom:10px" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        rmanagement user
+        management user
       </button>
     </section>
     <hr>
-    
+
   </section>
 
 
@@ -165,19 +212,19 @@ $associationList = $db -> queryRequest($sqlassoc);
         responsive: true,
 
         columns: [{
-            title: 'id_user'
+            title: 'ID USER'
           },
           {
-            title: 'last_name'
+            title: 'last name'
           },
           {
-            title: 'first_name'
+            title: 'first name'
           },
           {
-            title: 'user_type'
+            title: 'category'
           },
           {
-            title: 'user_email'
+            title: 'email'
           },
           {
             title: 'user_password',
@@ -197,9 +244,6 @@ $associationList = $db -> queryRequest($sqlassoc);
       });
 
     });
-
-    
-    
   </script>
   <script type="text/javascript" src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
