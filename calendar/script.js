@@ -127,6 +127,7 @@ function resetForm(){
 
 function getInfosModal(){
   document.getElementById('card-title').innerText = 'Modify reservation';
+  document.getElementById('idr').value = document.getElementById('event-number').innerText;
   document.getElementById('title').value= document.getElementById('event-title').innerText;
   document.getElementById('description').value= document.getElementById('event-description').innerText;
   let startTime = new Date(document.getElementById('event-start').innerText);
@@ -146,6 +147,7 @@ function getInfosModal(){
   }else if(document.getElementById('details-recurrency').value == 'infinite'){
     document.querySelector('div.form-group option[value=onetime]').removeAttribute('selected');
     document.querySelector('div.form-group option[value=recurrent]').setAttribute('selected','');
+    
     //document.getElementById('end_recurrency').removeAttribute('disabled');   
   } 
   $('#event-details-modal').modal('hide');

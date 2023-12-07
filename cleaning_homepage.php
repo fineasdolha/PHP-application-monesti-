@@ -26,10 +26,14 @@ $dateMessage = $date->format('m/d/Y');
 $_SESSION['disapear'] = 0;
 
 // je clique sur le bouton workdone cela insert dans BDD l'id de la personne qui l'utilise et la date/heure du jour
-if (isset($_POST['workdone'])) {
-  $sql = "INSERT INTO `interventions`(`id_user`, `time_stamp`) 
-  VALUES ('$iduser','$curentdate')";
-  $db->prepExec($sql);
+if (isset($_POST['workdone']) && $_POST['workdone'] != '') {
+    $timeSpend = $_POST['timePeriod'];
+    $sql = "INSERT INTO `interventions`(`id_user`, `time_stamp`,`time_spend`) 
+    VALUES ('$iduser','$curentdate','$timeSpend')";
+    $db->prepExec($sql);
+    //header('location:cleaning_homepage.php');
+
+  
 }
 
 //pour annuler workdone
@@ -47,14 +51,6 @@ if (isset($_POST['cancelWork']) && isset($_POST['workdone'])) {
 // sur le select je choisi un temps de travail que je viens update a mon workdone
 //puis je creer un message qui indiqueque le travail est réalisé
 //enfin je reinitialise la page pour eviter les renvoi de formulaire afin d'eviter les ajouts supplementaires dans la BDD
-if (isset($_POST['timePeriod']) && isset($_SESSION['message1']) == '') {
-  $timeSpend = $_POST['timePeriod'];
-  $sql = "UPDATE `interventions` SET `time_spend`='$timeSpend' ORDER BY id_intervention DESC LIMIT 1";
-  $db->prepExec($sql);
-  $_SESSION['message1'] = "CONGRATULATION ! You've juste register your work";
-
-  header('location:cleaning_homepage.php');
-}
 
 
 //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
@@ -163,11 +159,11 @@ $_SESSION['homepage']='cleaning_homepage.php';
               <div>
                 <button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px" type="submit" <?php if ( isset($_POST['timePeriod']) && isset($_POST['cancelWork'])=='') {
                                                                                                                 ?> disabled <?php }
-                                                                                                                            ?> onchange="this.form.submit()" name="workdone" id='workdone'>WORK DONE</button>
+                                                                                                                            ?>onchange="this.form.submit()"  name="workdone" id='workdone'>WORK DONE</button>
               </div>
               <div>
-                <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null) { ?>
-                  <select name="timePeriod" onchange="this.form.submit()" required>
+                <?php if (isset($_POST['workdone']) && isset($_POST['timePeriod']) == null) {?>
+                  <select name="timePeriod" required onchange="this.form.submit()">
                     <option value=''>how many hours ?</option>
                     <option value='30 min'>30 min</option>
                     <option value='1h30'>1h30</option>
@@ -178,6 +174,7 @@ $_SESSION['homepage']='cleaning_homepage.php';
                     <option value='4h'>4h</option>
                   </select>
                 <?php } ?>
+              <?php if(isset($_POST['timePeriod'])&& $_POST['timePeriod'] !=null){$_POST['workdone']='ready';} ?>
               </div>
               <?php if (isset($_POST['workdone']) == '' && isset($_POST['timePeriod'])) { ?>
                 <div class="alert alert-warning alert-dismissible fade show darker" role="alert">

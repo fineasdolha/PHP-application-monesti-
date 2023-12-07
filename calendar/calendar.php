@@ -11,6 +11,8 @@
         $db -> connection();
         $sql = 'SELECT * FROM `reservation`';
         $reservations = $db -> queryRequest($sql);
+        $sql = 'SELECT * FROM `places`';
+        $places = $db -> queryRequest($sql);
         $sched_res = [];
         
         foreach($reservations as $row){
@@ -21,7 +23,7 @@
         }
         
         $user_type= $_SESSION['user_type'];  
-       
+        $idAssociation = $_SESSION['id_association'];
         
     
 
@@ -67,10 +69,10 @@
       </span>
     </div>
   </nav>
-
-  <?php if(isset($_SESSION['message']) && $_SESSION['message'] != ''){ ?>
-        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
-            <?php echo $_SESSION['message']; 
+<!--alert fail--> 
+  <?php if(isset($_SESSION['message-fail']) && $_SESSION['message-fail'] != ''){ ?>
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <?php echo $_SESSION['message-fail']; 
                 
             ?>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -78,7 +80,19 @@
             </button>
         </div>  
     <?php }  ?>
-        
+
+<!--alert fail--> 
+<?php if(isset($_SESSION['message-success']) && $_SESSION['message-success'] != ''){ ?>
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <?php echo $_SESSION['message-success']; 
+                
+            ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>  
+    <?php }  ?>
+
         <div class="container py-5">
         <h1 class="text-center text-light py-5">Reservation calendar for the <span id="department"><?php print $user_type ?></span> <span id="association-text"><?php print $idAssociation ?></span></h1>
         <div class="row">
@@ -92,8 +106,8 @@
                     </div>
                     <div class="card-body">
                         <div class="container-fluid">
-                            <form action="save_schedule.php" method="post" id="schedule-form" enctype="multipart/form-data">
-                                <input type="hidden" name="id" value="">
+                            <form action="save_schedule.php" method="post" id="schedule-form" enctype="multipart/form-data" id="form">
+                                <input type="hidden" name="idr" id="idr" value="">
                                 <div class="form-group mb-2">
                                     <label for="title" class="control-label text-white">Title</label>
                                     <input type="text" class="form-control form-control-sm rounded-0" name="title" id="title" required>

@@ -13,7 +13,7 @@ $usertype = $infoPerson[0][3];
 //categorie de destination comment admin,cleaning assoc.
 $userassociation = $infoPerson[0][6];
 //nom assoc user
-$userAssocName=$infoPerson[0][16];
+$userAssocName=$infoPerson[0][15];
 
 //id comment .
 $idcomment = $infoPerson[0][7];
@@ -154,14 +154,14 @@ $_SESSION['homepage']='association_homepage.php';
     <div class="carousel-inner">
     <!--pour que la caroussel fonctionne il faut mettre active sur la première affiche donc ele ne sera activé que sur la première-->
     <?php $iteration=0;
-    foreach($elementDocAssoc as $row){ ?>
+    foreach($elementDocAssoc as $row){?>
       <div class="carousel-item 
       <?php if($iteration==0){ ?>
       active
       <?php }?>
       ">
         <div class="item__third">
-          <img src="<?php print $row['file']; ?>" class="d-block mx-auto" style="width:300px;margin-bottom:160px" alt="">
+          <img src="calendar/<?php print $row['file']; ?>" class="d-block mx-auto" style="width:300px;margin-bottom:160px" alt="">
           
           <div class="carousel-caption d-none d-md-block">
             <h5><?php print $row['title']; ?></h5>
