@@ -1,7 +1,35 @@
 <?php
         session_start();
         require_once('../connection.php');
-?>
+        $arraySession=array();
+        $arraySession= $_SESSION;
+        foreach($arraySession as $row){
+           
+        }
+
+        $db = new DAO;
+        $db -> connection();
+        $sql = 'SELECT * FROM `reservation`';
+        $reservations = $db -> queryRequest($sql);
+        $sched_res = [];
+        
+        foreach($reservations as $row){
+            $row['string_start_datetime'] = date("F d, Y h:i A",strtotime($row['start_datetime']));
+            $row['string_end_datetime'] = date("F d, Y h:i A",strtotime($row['end_datetime']));
+            $sched_res[$row['id_reservation']] = $row;
+    
+        }
+        
+        $user_type= $_SESSION['user_type'];  
+       
+        
+    
+
+
+//       
+// ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,38 +48,29 @@
     
 </head>
 <body style="background-color: rgba(16, 46, 46, 1) !important;">
-        <?php
-        $db = new DAO;
-        $db -> connection();
-        $sql = 'SELECT * FROM `places`';
-        $places = $db -> queryRequest($sql);
-        $sql = 'SELECT * FROM `reservation`';
-        $reservations = $db -> queryRequest($sql);
-        $sched_res = [];
-        foreach($reservations as $row){
-            $row['string_start_datetime'] = date("F d, Y h:i A",strtotime($row['start_datetime']));
-            $row['string_end_datetime'] = date("F d, Y h:i A",strtotime($row['end_datetime']));
-            $sched_res[$row['id_reservation']] = $row;
-    
-        }
+<nav class="navbar navbar-expand-lg navbar-dark px-5" style="border:1px solid white">
+    <a class="navbar-brand" href="#">Monestié</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="../<?php print($_SESSION['homepage']);?>">Home</a>
+        </li>
         
-        $user_type= $_SESSION['user_type'];
-        $idAssociation = $_SESSION['id_association'];
-       
-        ?>
-        <?php if(isset($_SESSION['message-fail']) && $_SESSION['message-fail'] != ''){ ?>
-        <div class="alert alert-danger alert-dismissible fade show " role="alert">
-            <?php echo $_SESSION['message-fail']; 
-                
-            ?>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>  
-    <?php }  ?>
-    <?php if(isset($_SESSION['message-success']) && $_SESSION['message-success'] != ''){ ?>
-        <div class="alert alert-success alert-dismissible fade show " role="alert">
-            <?php echo $_SESSION['message-success']; 
+      </ul>
+      <span class="navbar-text">
+        <form method="post">
+          <a class="nav-link" href="../logout.php" style="background:#ecb21f; font-size:1em">Log out</a>
+        </form>
+      </span>
+    </div>
+  </nav>
+
+  <?php if(isset($_SESSION['message']) && $_SESSION['message'] != ''){ ?>
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <?php echo $_SESSION['message']; 
                 
             ?>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
