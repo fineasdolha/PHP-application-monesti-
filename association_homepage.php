@@ -186,6 +186,10 @@ if (isset($_POST['cancelReply'])) {
       </article>
     </section>
     <hr>
+    <section class="container text-light">
+              <h1>Calendar</h1>
+              <a href="calendar/calendar.php"><button class="btn" style="background:#ecb21f; font-size:1em;margin-bottom:10px">View reservations calendar</button></a>
+</section>  
     <section>
       <div class="container">
         <div class="row">
