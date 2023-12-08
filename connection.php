@@ -5,9 +5,9 @@ class DAO {
 
 	
 	private $host="127.0.0.1";
-	private $user="id21641431_usertest";
-	private $password="TP!9WCFTbF2dByaH";
-	private $database="id21641431_monestie";
+	private $user="root";
+	private $password="";
+	private $database="monestie";
 	private $charset="utf8";
 	
 	//instance courante de la connexion
