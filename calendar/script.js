@@ -6,6 +6,7 @@ let Calendar = FullCalendar.Calendar;
 let dpt;
 let idAssociation = document.getElementById('association-text').innerText; 
 dpt = document.getElementById('department').innerText;
+// on modifie la page en fonction de l’utilisateur ne récupérant le texte de l’élément //department
 if (dpt == 'cleaning'){
   document.getElementById('calendar-wrapper').className = 'col-md-12'
   document.getElementById('form-rights').innerHTML ='';
@@ -20,11 +21,13 @@ if (dpt == 'cleaning'){
 }
 
 
-
+// création de calendrier
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
-    
+    // on utlise le API.php pour avoir le source de réservation 
+// on ajoute un eventlistener sur chaque réservation pour ouvrir le modal avec les détails en //concordance 
+
     events:'API.php',
     eventClick: function(info) {
       
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 
   });
-
+// pour gérer la problématique qu’une association n’a pas le droit de changer une réservation //d’une autre association, on utilise la fonction createButton() pour avoir le bouton edit que //les // réservation de l’association de l’utilisateur
   function createButton(){
     if(!document.getElementById('edit-modal')){
     let button = document.createElement('button');
@@ -82,13 +85,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('modal-end').append(button);
     }
   }
-
+// on utilise la fonction deleteButton() pour supprimer le bouton edit
   function deleteButton(){
     if(document.getElementById('edit-modal')){
       document.getElementById('edit-modal').remove();
     }
   }
-
+// on utilise la fonction checkRecurrency() pour rendre able ou disable le champ de la //dernière récurrence d’une réservation 
   function checkRecurrency(){
    let input = document.getElementById('end_recurrency');
    if (input.disabled){
@@ -100,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
    
   }
+  // cette fonction va assurer la création d’une date dans un format accepté de notre input //datetime-local
 function convertToDateTimeLocalString  (date) {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -110,7 +114,7 @@ function convertToDateTimeLocalString  (date) {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
   
-   
+   // cette fonction va rendre le formulaire aux valeurs par défaut
 function resetForm(){
   document.getElementById('card-title').innerText = 'New reservation'; 
   document.getElementById('title').value="";
@@ -124,7 +128,7 @@ function resetForm(){
 
 }
 
-
+// en utilisant cette fonction on va pouvoir récupérer tous les détails de la réservation sur //laquelle on a cliqué et ces détails vont être mis dans le formulaire 
 function getInfosModal(){
   document.getElementById('card-title').innerText = 'Modify reservation';
   document.getElementById('idr').value = document.getElementById('event-number').innerText;
@@ -146,11 +150,11 @@ function getInfosModal(){
     document.getElementById('end_recurrency').value = convertToDateTimeLocalString(dateRecurrent); 
   }else if(document.getElementById('details-recurrency').value == 'infinite'){
     document.querySelector('div.form-group option[value=onetime]').removeAttribute('selected');
-    document.querySelector('div.form-group option[value=recurrent]').setAttribute('selected','');
-    
-    //document.getElementById('end_recurrency').removeAttribute('disabled');   
+    document.querySelector('div.form-group option[value=recurrent]').setAttribute('selected','');  
+    if(dpt == admin)
+    {document.getElementById('end_recurrency').removeAttribute('disabled');   
   } 
   $('#event-details-modal').modal('hide');
-}
+}}
 
 

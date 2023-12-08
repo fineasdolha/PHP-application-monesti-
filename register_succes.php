@@ -15,6 +15,9 @@ $db -> connection();
     <title>Success</title>
 </head>
 <body>
+<!-- // l’utilisateur reçoit la confirmation de son enregistrement sur l’application
+// ensuite il peut accéder à la page Login -->
+
     <section class="container my-5">
     <div class="alert alert-success" role="alert">
         <h4 class="alert-heading">Well done!</h4>

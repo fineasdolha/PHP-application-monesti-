@@ -7,6 +7,10 @@ $sql = 'SELECT id_reservation,title,end_datetime,last_update,description, reserv
 $reservations = $db->queryRequest($sql);
 $sched_res = [];
 
+// sur cette page on va créer le api que l’on va utiliser pour la création du calendrier
+//en itérant la requête sql on va ajouter dans un array dans un tableau $event tous les détails //concernant la réservation 
+// en finissant d’ajouter les détails on va insérer la variable $event dans le tableau //$sched_res[]
+
 foreach ($reservations as $row) {
     if($row["type_reservation"]=='onetime'){
         $event=array();
@@ -48,7 +52,7 @@ foreach ($reservations as $row) {
    $sched_res[] = $event;
 
 }
-
+// on fait le retour des réservations en utilisant la fonction json_encode()
 $return = $sched_res;
 echo json_encode($return);
 

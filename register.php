@@ -18,6 +18,7 @@
     <title>Register</title>
 </head>
 <body>
+<!-- // s’il existe, on affiche le message d’erreur -->
     <?php if(isset($_SESSION['message-error'])){ ?>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <?php echo $_SESSION['message-error']; 
@@ -31,6 +32,12 @@
     <figure class="text-center">
     <h1>Register <sub>below</sub></h1>
     </figure>
+    <!-- // formulaire en méthode post qui cible la page register_check.php
+// pour récupérer les données des nouveaux utilisateurs et pour ensuite pouvoir les tester
+// on établit d’abord que ce formulaire est réservé aux nouveaux utilisateurs des associations 
+// assurer que la mairie gère l’accès aux utilisateurs de l’administration
+// pour ajouter un autre type d’utilisateur (admin,cleaning) il faut se connecter avec un //compte d’administrateur -->
+
 <form action="register_check.php" method="POST" class="container" style="max-width: 500px;">
   <div class="mb-3">
     <label for="firstName" class="form-label">First name</label>

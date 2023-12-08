@@ -37,9 +37,7 @@ $arrayComment = $db->getCommentsAdmin($usertype);
   //recupere sql pour les réponses car order different
   $arrayResponse = $db->getCommentsResponsAdmin($usertype);
   $elementResponse = $db->queryRequest($arrayResponse);
-  $dateComment = explode('-', $elementComment[0]['time_stamp']);
-  $day = explode(' ', $dateComment[2]);
-  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
+  
 
 
 //obtenir nom assoc et id
@@ -90,7 +88,7 @@ if (isset($_POST['cancelReply'])) {
 }
 $_SESSION['homepage']='admin_homepage.php';
 //pour la creation d'un json pour js
-$infoAssoc = $db->getAllAssociation();
+
 
 ?>
 
@@ -160,6 +158,9 @@ $infoAssoc = $db->getAllAssociation();
             <?php 
             foreach ($elementComment as $row) {
               $idComent = $row['id_comment'];
+              $dateComment = explode('-', $row['time_stamp']);
+              $day = explode(' ', $dateComment[2]);
+              $time_stamp = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
               if ($row['id_comment'] != null && $row['comment_id']==0) { ?>
                 <form method="post">
                   <div class="darker mt-4 text-justify">
@@ -170,7 +171,7 @@ $infoAssoc = $db->getAllAssociation();
                     <input type="hidden" name="parentassociation" value="<?php print $row['id_association']; ?>">
                     <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
                     <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
-                    <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                    <span>sent : <?php print $time_stamp; ?></span><br>
                     <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
                       <span style="color:black">REPLY</span>
 
@@ -181,13 +182,17 @@ $infoAssoc = $db->getAllAssociation();
           <div>
             <?php
                 foreach ($elementResponse as $row) {
-                  if ($idComent == $row['comment_id']) { ?>
+                  if ($idComent == $row['comment_id']) {
+                    
+  $dateComment = explode('-', $row['time_stamp']);
+  $day = explode(' ', $dateComment[2]);
+  $time_stamp = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0]; ?>
                 <div class="darker mt-4 text-end response">
                   <!-- //si on veut ajouter un avatar aux utilisateurs -->
                   <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
                   <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
                   <p><?php print $row['description']; ?></p><br>
-                  <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                  <span>sent : <?php print $time_stamp; ?></span><br>
                 </div>
             <?php }
                 } ?>
@@ -199,7 +204,7 @@ $infoAssoc = $db->getAllAssociation();
                   <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
                   <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
                   <p><?php print $row['description']; ?></p><br>
-                  <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                  <span>sent : <?php print $time_stamp; ?></span><br>
                 </div>
             <?php }
                 } ?>

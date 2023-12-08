@@ -45,10 +45,7 @@ if ($usertype == 'association') {
   //recupere sql pour les réponses car order different
   $arrayResponse = $db->getCommentsResponse($usertype);
   $elementResponse = $db->queryRequest($arrayResponse);
-  //je met la date au format americain
-  $dateComment = explode('-', $elementComment[0]['time_stamp']);
-  $day = explode(' ', $dateComment[2]);
-  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
+  
 }
 
 //requete pour recup info doc pour gestion carousel
@@ -199,7 +196,13 @@ $_SESSION['homepage']='association_homepage.php';
 <?php foreach ($elementComment as $row) {
   $idComent = $row['id_comment'];
   
-  if ($row['id_comment'] != null  && $userassociation == $row['association_id']) {?>
+  $dateComment = explode('-', $row['time_stamp']);
+  $day = explode(' ', $dateComment[2]);
+  $time_stamp = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
+
+  if ($row['id_comment'] != null  && $userassociation == $row['association_id'] && $row['comment_id']==0) {
+    
+    ?>
     <form method="post">
       <div class="darker mt-4 text-justify ">
         <!-- //si on veut ajouter un avatar aux utilisateurs -->
@@ -209,7 +212,7 @@ $_SESSION['homepage']='association_homepage.php';
         <input type="hidden" name="parentassociation" value="<?php print $row['association_id']; ?>">
         <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
         <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
-        <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+        <span>sent : <?php print $time_stamp; ?></span><br>
         <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='<?php print $row['id_comment']; ?>' class="btn" onchange="this.form.submit()">
           REPLY
         </button>
@@ -217,18 +220,30 @@ $_SESSION['homepage']='association_homepage.php';
     </form>
     <div>
       <?php foreach ($elementResponse as $row) {
-        if ($idComent == $row['comment_id']) { ?>
+        if ($idComent == $row['comment_id'] ) { ?>
           <div class="darker mt-4 text-end response">
             <!-- //si on veut ajouter un avatar aux utilisateurs -->
             <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
             <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
             <p><?php print $row['description']; ?></p><br>
-            <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+            <span>sent : <?php print $time_stamp; ?></span><br>
           </div>
       <?php }
       } ?>
-    <?php } ?>
+    <?php } else{ 
+                foreach ($elementResponse as $row) {
+                  if ($idComent == $row['comment_id'] && $userassociation == $row['association_id']) { ?>
+                <div class="darker mt-4 text-end response">
+                  <!-- //si on veut ajouter un avatar aux utilisateurs -->
+                  <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+                  <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
+                  <p><?php print $row['description']; ?></p><br>
+                  <span>sent : <?php print $time_stamp; ?></span><br>
+                </div>
+            <?php }
+                } ?>
 
+  <?php } ?>
   <?php } ?>
     </div>
           </div>

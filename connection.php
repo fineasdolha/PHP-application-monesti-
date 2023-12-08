@@ -44,6 +44,10 @@ class DAO {
         return $sqlassoc;
     }
 
+    // requête
+// fonction pour récupérer les résultats d’une requête en utilisant la (prepare) et (execute)
+// comme ça on assure la sécurité
+
     public function queryRequest($sql) {
         $query = $this->connection->prepare($sql);
         $query->execute();
@@ -51,12 +55,14 @@ class DAO {
         return $fetch;
     }
     
+    // fonction pour exécuter une requête sql en utilisant (prepare) et (execute)
     public function prepExec($testsql) {
         $query = $this->connection->prepare($testsql);
         $query -> execute();
 
     }
 
+    // on les récupère dans des SESSION variables
     public function getUserInfo($useremail) {
          
         $sqluser = "SELECT * FROM `person` WHERE `user_email`=?";
@@ -149,7 +155,7 @@ class DAO {
 
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY time_stamp, destination  DESC';
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY id_comment  DESC';
       
         return $sqluser;
     }
@@ -165,20 +171,20 @@ class DAO {
     
     //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne est un admin.
     public function getCommentsResponsAdmin() {
-        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY destination, time_stamp ASC';
+        $sqluser = 'SELECT * FROM `comments`LEFT JOIN person ON(person.id_user=comments.id_user) ORDER BY comment_id ASC';
       
         return $sqluser;
     }
 
      //je recupere les informations de commentaires posté pour les afficher sur les pages si la personne appartient au nettoyage.
      public function getCommentsAsso($destination) {
-        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY time_stamp DESC';
+        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY id_comment DESC';
         return $sqluser;
     }
 
     //je recupère les comments mais dans un ordre different pour afficher les réponses dans l'ordre croissant
     public function getCommentsResponse($destination) {
-        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY id_comment ASC';
+        $sqluser = 'SELECT * FROM `comments` LEFT JOIN person ON(person.id_user=comments.id_user) WHERE destination IN("'.$destination.'") ORDER BY comment_id ASC';
         return $sqluser;
     }
     

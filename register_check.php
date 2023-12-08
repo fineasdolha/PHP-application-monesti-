@@ -5,6 +5,7 @@ $db = new DAO();
 $db -> connection();
 $checkAllFields = false;
 $checkEmailUsage=false;
+// on vérifie que chaque saisie est conforme
 if (isset($_POST['firstname'])&& $_POST['firstname'] !=''){
     $firstname = $_POST['firstname'];
     if (isset($_POST['lastname'])&& $_POST['lastname'] !=''){
@@ -15,7 +16,10 @@ if (isset($_POST['firstname'])&& $_POST['firstname'] !=''){
             $checkEmailUsage=true;
             $checkAllFields=true;
             header('location:register.php');
-        }    
+        } 
+        // on vérifie que l’adresse email n’est pas déjà utilisée et que le mot de passe n’est pas vide
+// on crypte ensuite le mot de passe avec la fonction password_hash() en cryptage argon2id
+   
         if(isset($_POST['password']) && $_POST['password'] !='' && $checkEmailUsage==false){
                 $password = password_hash($_POST['password'], PASSWORD_ARGON2ID);
             if(isset($_POST['entity']) && $_POST['entity'] != ''){
@@ -31,6 +35,7 @@ if (isset($_POST['firstname'])&& $_POST['firstname'] !=''){
     }
 }
 
+// si l’enregistrement a bien  été effectué on cible la page register_success.php
 if($checkAllFields==true && $checkEmailUsage==false){
     header('location:register_succes.php');
 }

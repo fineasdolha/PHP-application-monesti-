@@ -14,6 +14,9 @@
     <title>Login</title>
 </head>
 <body>
+<!-- // afficher le message de la variable SESSION dans  une alerte bootstrap
+// pour informer l’utilisateur si l’email ou le mot de passe saisi ne correspond pas -->
+
 <?php if(isset($_SESSION['message-error'])){ ?>
         <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
             <?php echo $_SESSION['message-error']; 
@@ -27,6 +30,7 @@
     <figure class="text-center">
     <h1>Log into<sub> your account</sub></h1>
     </figure>
+  <!-- formulaire en méthode POST ciblée sur la page “login_check.php” pour récupérer les //données de l’utilisateur et ensuite les valider -->
 <form action="login_check.php" method="POST" class="container" style="max-width: 500px;">
   <div class="mb-3">
     <label for="inputEmail" class="form-label">Email address</label>
@@ -43,6 +47,7 @@
     <a href="index.php"><button type="button" style="width: 200px; height:80px;background:#ecb21f; font-size:1em" class="btn m-5">Return to homepage</button></a>
     <a href="register.php"><button type="button" style="width: 200px; height:80px;background:#ecb21f; font-size:1em" class="btn m-5">Not yet signed up? Register!</button></a>
 </section>
+<!-- vider la variable SESSION “message-error” dans le cas où elle a déjà été utilisée -->
 <?php if(isset($_SESSION['message-error'])){$_SESSION['message-error']=null;} ?>  
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>    
 </body>

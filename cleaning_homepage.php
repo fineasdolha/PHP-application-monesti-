@@ -54,7 +54,9 @@ if (isset($_POST['cancelWork'])) {
 
   header('location:cleaning_homepage.php');
 }
-
+//obtenir nom assoc et id
+$arrayInfoAssoc = $db->getAssociations($usertype);
+  $elementAssoc = $db->queryRequest($arrayInfoAssoc);
 
 //si la personne fait partie de l'equipe cleaning alors elle peux voir les commentaires selectionnés.
 if ($usertype == 'cleaning') {
@@ -63,10 +65,7 @@ if ($usertype == 'cleaning') {
   //recupere sql pour les réponses car order different
   $arrayResponse = $db->getCommentsResponse($usertype);
   $elementResponse = $db->queryRequest($arrayResponse);
-  //je met la date au format americain
-  $dateComment = explode('-', $elementComment[0]['time_stamp']);
-  $day = explode(' ', $dateComment[2]);
-  $_SESSION['time_stamp'] = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
+ 
 }
 
 if (isset($_POST['reply'])) {
@@ -208,7 +207,12 @@ $_SESSION['homepage'] = 'cleaning_homepage.php';
             <?php
             foreach ($elementComment as $row) {
               $idComent = $row['id_comment'];
-              if ($row['id_comment'] != null) { ?>
+              //pour lire la date au format americain sur commentaire
+              $dateComment = explode('-', $row['time_stamp']);
+              $day = explode(' ', $dateComment[2]);
+              $time_stamp = $day[0] . "/" . $dateComment[1] . "/" . $dateComment[0];
+              if ($row['id_comment'] != null && $row['comment_id']==0) { ?>
+                
                 <form method="post">
                   <div class="darker mt-4 text-justify">
                     <!-- //si on veut ajouter un avatar aux utilisateurs -->
@@ -218,7 +222,7 @@ $_SESSION['homepage'] = 'cleaning_homepage.php';
                     <input type="hidden" name="parentassociation" value="<?php print $row['id_association']; ?>">
                     <input type="hidden" name="parentDestinat" value="<?php print $row['user_type']; ?>">
                     <input type="hidden" name="parent_id" value="<?php print $row['id_comment']; ?>">
-                    <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                    <span>sent : <?php print $time_stamp; ?></span><br>
                     <button type="submit" style="background:#ecb21f; font-size:0.7em;margin-bottom:10px" name='reply' id='reply' class="btn" onchange="this.form.submit()">
                       <span style="color:black">REPLY</span>
                     </button>
@@ -226,17 +230,30 @@ $_SESSION['homepage'] = 'cleaning_homepage.php';
                 </form>
                 <div>
                   <?php foreach ($elementResponse as $row) {
-                    if ($idComent == $row['comment_id']) { ?>
+                     if ($idComent == $row['comment_id']) { ?>
                       <div class="darker mt-4 text-end response">
                         <!-- //si on veut ajouter un avatar aux utilisateurs -->
                         <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
                         <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
                         <p><?php print $row['description']; ?></p><br>
-                        <span>sent : <?php print $_SESSION['time_stamp']; ?></span><br>
+                        <span>sent : <?php print $time_stamp; ?></span><br>
                       </div>
                   <?php }
                   } ?>
-                <?php } ?>
+                <?php }  else{ 
+                foreach ($elementResponse as $row) {
+                  if ($idComent == $row['comment_id']) { ?>
+                <div class="darker mt-4 text-end response">
+                  <!-- //si on veut ajouter un avatar aux utilisateurs -->
+                  <img src="https://i.imgur.com/yTFUilP.jpg" alt="avatar" class="rounded-circle" width="40" height="40">
+                  <h4><?php print $row['first_name']; ?> <?php print $row['last_name']; ?></h4>
+                  <p><?php print $row['description']; ?></p><br>
+                  <span>sent : <?php print $time_stamp; ?></span><br>
+                </div>
+            <?php }
+                } ?>
+
+             <?php } ?>
               <?php } ?>
                 </div>
           </div>

@@ -6,18 +6,21 @@ $db = new DAO;
 
 
 
-        var_dump($_POST);
-        var_dump($_SESSION);
-        //var_dump($_POST['idr']);
+        
 $checkExistance= $db ->queryRequest('SELECT id_reservation, id_association FROM `reservation` JOIN person WHERE person.id_user= reservation.id_user AND person.id_user = "'.$_SESSION['id_user'].'" AND reservation.start_datetime = "'.$_POST['start_datetime'].'"');
 if($checkExistance){ 
 $id = $checkExistance[0]['id_reservation'];
 
 }
-
+// on vérifie que l’utilisateur veuille mettre à jour une réservation
 if($_POST['send']=='update'){ 
         $checkAvailability = $db -> queryRequest('SELECT id_reservation, start_datetime, end_datetime, places.id_place FROM `reservation` JOIN places WHERE reservation.id_place = "'.$_POST['place'].'"');
         $takenSlot = false;
+        // en itérant la requête faite on va vérifier que la mise à jour de la réservation ne tombera pas // sur un créneau déjà utilisé
+// on vérifie que le id de la réservation que l’on veut changer est différent de l’id de la 
+// réservation itérée
+// en utilisant la variable takenslot on peut avoir un compteur de toutes les vérifications
+
         foreach($checkAvailability as $row){    
                 $todayDate = new DateTime();
                 $startDate = new DateTime($row['start_datetime']);
@@ -48,9 +51,12 @@ if($_POST['send']=='update'){
                                 }             
                         }
                 }
-                
+                // si la variable takenslot est vraie on cible la page calendar.php
+// sinon on va mettre à jour d’abord la réservation et après ensuite les fichiers associés
+
+
                 if($takenSlot){
-                        //header('location:calendar.php');
+                        header('location:calendar.php');
                         }
                 else { 
                 if (isset($_POST['end_recurrency']) && $_POST['end_recurrency']!=null){
@@ -77,6 +83,10 @@ if($_POST['send']=='update'){
                 if(isset($_FILES['file-reservation'])){         
                         $ext = pathinfo($_FILES['file-reservation']['name'], PATHINFO_EXTENSION);
                         $aMimeTypes = array("jpg","jpeg","png");
+                        //si les fichiers saisis sont dans un format accepté (jpg, jpeg, png) on va mettre à jour le 
+// fichier dans la base de données dans le dossier media1 
+// en utilisant la fonction move_uploaded_file()
+
                         if (in_array($ext, $aMimeTypes))
                                 {
                                 $uploadsDirectory = 'media1';
@@ -108,6 +118,9 @@ if($_POST['send']=='update'){
         }
 }
 else if ($_POST['send']=='delete'){
+        // si le formulaire envoyé cible la suppression d’une réservation
+// on va d’abord supprimer la réservation et ensuite le fichier associé
+
         $sql = 'DELETE FROM reservation WHERE id_reservation = "'.$_POST['idr'].'"';
         $_SESSION['message-success'] = 'Reservation succesfully deleted from the database';
         $db -> queryRequest($sql);
@@ -126,6 +139,9 @@ else if ($_POST['send']=='delete'){
         }
 
 }else if($_POST['send']=='save'){ 
+// en itérant la requête faite on va vérifier que l’insertion de la réservation ne tombera pas 
+// sur un créneau déjà utilisé
+// en utilisant la variable takenslot on peut avoir un compteur de toutes les vérifications faites
 
         $checkAvailability = $db -> queryRequest('SELECT start_datetime, end_datetime, places.id_place FROM `reservation` JOIN places WHERE reservation.id_place = "'.$_POST['place'].'"');
         $takenSlot = false;
@@ -158,7 +174,7 @@ else if ($_POST['send']=='delete'){
                 }
                 
                 if($takenSlot){
-                        //header('location:calendar.php');
+                        header('location:calendar.php');
                 }else  
                         { 
                                 if(isset($_POST['end_recurrency'])&&$_POST['end_recurrency']!=null){  
@@ -171,7 +187,10 @@ else if ($_POST['send']=='delete'){
                                         $_SESSION['message-success'] = 'Reservation succesfully inserted into the database';
                                         $db -> queryRequest($sql);      
                                 }
-        
+        // si les fichiers saisis sont dans un format accepté (jpg, jpeg, png) on va insérer le 
+// fichier dans la base de données et dans le dossier media1 
+// en utilisant la fonction move_uploaded_file()
+
                                 if(isset($_FILES['file-reservation'])){         
                                         $ext = pathinfo($_FILES['file-reservation']['name'], PATHINFO_EXTENSION);
                                         $aMimeTypes = array("jpg","jpeg","png");
@@ -206,6 +225,6 @@ else if ($_POST['send']=='delete'){
                 }
 
 
-//header('location:calendar.php');
+header('location:calendar.php');
 
 ?>

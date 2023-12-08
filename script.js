@@ -6,6 +6,7 @@ function disableSelect(){
 	document.querySelector('div.mb-3 option').removeAttribute('selected');
 	document.getElementById('choice-none').setAttribute('selected','');
 };
+// on modifie la page en fonction de l’utilisateur ne récupérant le texte de l’élément //department
 
 function enableSelect(){
 	document.getElementById('association-choice').removeAttribute('disabled');

@@ -81,7 +81,7 @@
         </div>  
     <?php }  ?>
 
-<!--alert fail--> 
+<!--alert success--> 
 <?php if(isset($_SESSION['message-success']) && $_SESSION['message-success'] != ''){ ?>
         <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
             <?php echo $_SESSION['message-success']; 
@@ -92,13 +92,14 @@
             </button>
         </div>  
     <?php }  ?>
-
+<!--  on récupère dans le DOM, le type d’utilisateur (admin, cleaning et association) pour pouvoir ensuite crypter la page en concordance  -->
         <div class="container py-5">
         <h1 class="text-center text-light py-5">Reservation calendar for the <span id="department"><?php print $user_type ?></span> <span id="association-text"><?php print $idAssociation ?></span></h1>
         <div class="row">
+            <!-- création de div pour le futur calendrier -->
             <div class="col-md-9" id="calendar-wrapper">
                 <div id="calendar" class="rounded-2 shadow p-1" style="background-color: white; border:solid #ecb21f"></div>
-            </div>
+            </div><!--  création de formulaires en boostrap en méthode post qui cible la page safe_schedule.php avec un attribut enctype de multipart/form-data pour pouvoir récupérer les fichiers saisis-->
             <div class="col-md-3" id="form-rights">
                 <div class="cardt rounded-2 shadow">
                     <div class="card-header bg-dark text-light">
@@ -135,6 +136,7 @@
                                     <label for="end_recurrency" class="control-label text-white">Last recurrency will be: </label>     
                                     <input type="datetime-local" class="form-control form-control-sm rounded-0" name="end_recurrency" id="end_recurrency" disabled>
                                 </div>
+                                <!--  itération en php pour récupérer les lieux existant  -->
                                 <div class="form-group mb-2">
                                     <label for="select" class="control-label text-white">Choose the place</label>
                                     <select class="form-control form-control-sm rounded-0" name="place" id="select-place" required>

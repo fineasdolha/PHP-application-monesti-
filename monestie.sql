@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 07 déc. 2023 à 22:25
+-- Généré le : ven. 08 déc. 2023 à 10:47
 -- Version du serveur : 8.0.31
 -- Version de PHP : 8.0.26
 
@@ -67,27 +67,19 @@ CREATE TABLE IF NOT EXISTS `comments` (
   KEY `idx_fk_id_comment` (`comment_id`),
   KEY `idx_fk_id_user` (`id_user`) USING BTREE,
   KEY `idx_fk_association_id` (`association_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `comments`
 --
 
 INSERT INTO `comments` (`id_comment`, `comment_id`, `description`, `id_reservation`, `id_user`, `destination`, `time_stamp`, `association_id`) VALUES
-(37, 0, 'Super! j\'ai hâte d\'être aux automnales', NULL, 17, 'association', '2023-12-07 06:51:00', 1),
-(38, 37, 'heureux evenement', NULL, 16, 'association', '2023-12-07 06:26:00', 3),
-(39, 0, 'Recevez vos messages ici', NULL, 22, 'cleaning', '2023-12-07 19:15:54', 3),
-(40, 39, 'Recevez vos messages ici', NULL, 22, 'association', '2023-12-07 19:16:03', 3),
-(43, 0, 'comment faire', NULL, 17, 'admin', '2023-12-07 09:11:00', 3),
-(44, 43, 'je ne sais pas', NULL, 16, 'association', '2023-12-07 09:33:00', 3),
-(45, 0, 'test', NULL, 17, 'association', '2023-12-07 10:37:00', 3),
-(46, 0, 'test admin', NULL, 17, 'admin', '2023-12-07 10:24:00', 3),
-(47, 46, 'test reply', NULL, 16, 'association', '2023-12-07 10:02:00', 3),
-(48, 0, 'test clean', NULL, 17, 'cleaning', '2023-12-07 10:33:00', 3),
-(49, 48, 'test reply clean', NULL, 19, 'association', '2023-12-07 10:04:00', 3),
-(50, 0, 'test admin', NULL, 17, 'admin', '2023-12-07 10:45:00', 3),
-(52, 0, 'test clean to clean', NULL, 19, 'cleaning', '2023-12-07 10:12:00', 0),
-(53, 52, 'reply to clean', NULL, 20, 'cleaning', '2023-12-07 10:37:00', 0);
+(72, 0, 'Bonjour, comment vas tu Propre?', NULL, 19, 'cleaning', '2023-12-08 09:57:00', 0),
+(73, 72, 'Super bien et toi? pas trop froid en Lorraine?', NULL, 20, 'cleaning', '2023-12-08 09:46:00', 0),
+(74, 0, 'Joyeux Noël à tous !!', NULL, 16, 'cleaning', '2023-12-08 10:12:00', 0),
+(75, 0, 'Joyeux Noël à toute l\'association !', NULL, 17, 'association', '2023-12-08 10:08:00', 3),
+(76, 75, 'Merci à toi aussi !', NULL, 18, 'association', '2023-12-08 10:59:00', 3),
+(77, 0, 'bonjour', NULL, 21, 'association', '2023-12-08 10:15:00', 4);
 
 -- --------------------------------------------------------
 
@@ -215,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `reservation` (
   PRIMARY KEY (`id_reservation`),
   KEY `idx_fk_id_user` (`id_user`),
   KEY `idx_fk_id_place` (`id_place`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `reservation`
@@ -225,7 +217,9 @@ INSERT INTO `reservation` (`id_reservation`, `title`, `end_datetime`, `last_upda
 (41, 'testslot', '2023-12-07 12:30:00', '0000-00-00 00:00:00', 'qdqsd', 5, 'onetime', '2023-12-07 10:30:00', 0),
 (44, 'foire d\'automne', '2023-12-09 23:53:00', '0000-00-00 00:00:00', 'hfghfgf', 16, 'onetime', '2023-12-09 21:53:00', 1),
 (45, 'les automnales', '2023-12-14 23:07:00', '0000-00-00 00:00:00', 'frzgazg', 17, 'onetime', '2023-12-14 22:07:00', 1),
-(46, 'les pinceaux d\'or', '2023-12-28 16:35:00', '0000-00-00 00:00:00', 'venez aux concours artistique pour ado', 17, 'onetime', '2023-12-28 10:39:00', 1);
+(46, 'les pinceaux d\'or', '2023-12-28 16:35:00', '0000-00-00 00:00:00', 'venez aux concours artistique pour ado', 17, 'onetime', '2023-12-28 10:39:00', 1),
+(47, 'anniversaire', '2023-12-30 13:08:00', '0000-00-00 00:00:00', 'bon anniversaire guillaume', 16, 'recurrent', '2023-12-30 09:07:00', 1),
+(48, 'frzg', '2023-12-27 13:09:00', '0000-00-00 00:00:00', 'rzgezrg', 16, 'onetime', '2023-12-27 09:08:00', 2);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
