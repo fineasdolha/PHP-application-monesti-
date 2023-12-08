@@ -5,8 +5,8 @@ class DAO {
 
 	
 	private $host="127.0.0.1";
-	private $user="root";
-	private $password="";
+	private $user="userTest";
+	private $password="TP!9WCFTbF2dByaH";
 	private $database="monestie";
 	private $charset="utf8";
 	

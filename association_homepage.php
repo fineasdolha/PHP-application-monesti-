@@ -186,7 +186,7 @@ $_SESSION['homepage']='association_homepage.php';
       </article>
     </section>
     <hr>
-    
+  
     <section>
       <div class="container">
         <div class="row">
