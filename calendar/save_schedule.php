@@ -191,10 +191,10 @@ else if ($_POST['send']=='delete'){
 // fichier dans la base de données et dans le dossier media1 
 // en utilisant la fonction move_uploaded_file()
 
-                                if(isset($_FILES['file-reservation'])){         
+                                if(isset($_POST['file-reservation']) && !empty($_POST['file-reservation'])){         
                                         $ext = pathinfo($_FILES['file-reservation']['name'], PATHINFO_EXTENSION);
                                         $aMimeTypes = array("jpg","jpeg","png");
-                                        var_dump($ext);
+                                        //var_dump($_POST['file-reservation']);
                                         if (in_array($ext, $aMimeTypes))
                                                 {
                                                 $insertedRequest = $db -> queryRequest('SELECT id_reservation , id_association FROM `reservation` 

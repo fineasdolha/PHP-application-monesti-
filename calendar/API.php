@@ -21,7 +21,8 @@ foreach ($reservations as $row) {
         $event['reservation_number']=$row['id_reservation'];
         $event['description']= $row['description'];
         $tempPlace = $db -> queryRequest('SELECT `name`,`id_place` FROM `places` WHERE id_place = "'.$row['id_place'].'" ');
-        $event['reservation_place']= $tempPlace[0]['name'];
+       
+       $event['reservation_place']= $tempPlace[0]['name'];
         $event['place_id']=$tempPlace[0]['id_place'];
         $event['overlap'] = false;
     } else {
