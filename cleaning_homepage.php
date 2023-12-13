@@ -94,7 +94,7 @@ if (isset($_POST['msgreply'])) {
   $description = str_replace("'", "\'", $_POST['msgreply']);
   $id = $_SESSION['id'];
   $idAssoc = $_SESSION['idAssoc'];
-  $userReply = $_SESSION['userReply'];
+  // $userReply = $_SESSION['userReply'];
   //je récupère id_comment pour mettre dans la clefs secondaire. si je répond au comment1 alors les reponses auront comment_id 1
   $sql = "INSERT INTO `comments`( `comment_id`, `description`, `id_user`, `destination`, `time_stamp`,`association_id`)
      VALUES ('$id','$description',' $iduser','$destinat','$curentdate','$idAssoc')";
