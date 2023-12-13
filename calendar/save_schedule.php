@@ -97,13 +97,28 @@ if($_POST['send']=='update'){
                                                 if(strstr($file, $_POST['idr'])){
                                                         unlink($dataDirectory.$file);
                                                 }
-                                }                                    
-
+                                }
+                                                                    
                                 $filename = $_POST['idr'].'.'.$ext; 
                                 $dataDirectory = 'media1/';
                                 $nameToInsert= $dataDirectory.$filename;
                                 move_uploaded_file($_FILES["file-reservation"]["tmp_name"], "$uploadsDirectory/$filename");
+                                $sql = 'SELECT COUNT(*) FROM `docs` WHERE id_reservation="'.$_POST['idr'].'"';
+                                $ok =  $db -> queryRequest($sql);
+                                var_dump($ok);
+                                if($ok){
                                 $sql = 'UPDATE `docs` SET `file`="'.$nameToInsert.'" WHERE id_reservation="'.$_POST['idr'].'" ';
+                                }else {
+                                $insertedRequest = $db -> queryRequest('SELECT id_reservation , id_association FROM `reservation` 
+                                JOIN person 
+                                WHERE person.id_user = reservation.id_user 
+                                AND person.id_user = "'.$_SESSION['id_user'].'" 
+                                AND reservation.start_datetime =  "'.$_POST['start_datetime'].'"                                        AND reservation.id_place =  "'.$_POST['place'].'"');
+                                $idReservation = $insertedRequest[0]['id_reservation'];
+                                $idAssociation = $insertedRequest[0]['id_association'];        
+                                $sql='INSERT INTO `docs`( `id_association`, `file`, `id_reservation`) VALUES ("'.$idAssociation.'","'.$nameToInsert.'","'.$idReservation.'")';        
+                                }
+                                
                                 
                                 $db -> queryRequest($sql);
                                 $_SESSION['message-succes']= 'Reservation and file details updated';
@@ -191,10 +206,9 @@ else if ($_POST['send']=='delete'){
 // fichier dans la base de données et dans le dossier media1 
 // en utilisant la fonction move_uploaded_file()
 
-                                if(isset($_POST['file-reservation']) && !empty($_POST['file-reservation'])){         
+                                if(isset($_FILES['file-reservation']) && !empty($_FILES['file-reservation'])){         
                                         $ext = pathinfo($_FILES['file-reservation']['name'], PATHINFO_EXTENSION);
                                         $aMimeTypes = array("jpg","jpeg","png");
-                                        //var_dump($_POST['file-reservation']);
                                         if (in_array($ext, $aMimeTypes))
                                                 {
                                                 $insertedRequest = $db -> queryRequest('SELECT id_reservation , id_association FROM `reservation` 
@@ -225,6 +239,6 @@ else if ($_POST['send']=='delete'){
                 }
 
 
-header('location:calendar.php');
+//header('location:calendar.php');
 
 ?>
